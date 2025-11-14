@@ -21,14 +21,18 @@ final class AuthInterceptor: RequestInterceptorProtocol {
     func interceptRequest(_ request: inout URLRequest) async throws {
         guard let url = request.url,
               var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return
+            throw NetworkError.invalidURL("Failed to parse URL for authentication")
         }
         
         var queryItems = urlComponents.queryItems ?? []
         if !queryItems.contains(where: { $0.name == queryParameterName }) {
             queryItems.append(URLQueryItem(name: queryParameterName, value: apiKey))
             urlComponents.queryItems = queryItems
-            request.url = urlComponents.url
+            
+            guard let updatedURL = urlComponents.url else {
+                throw NetworkError.invalidURL("Failed to create URL with API key")
+            }
+            request.url = updatedURL
         }
     }
 }

@@ -173,4 +173,3 @@ final class RestService: RestServiceProtocol {
         return urlRequest
     }
 }
-

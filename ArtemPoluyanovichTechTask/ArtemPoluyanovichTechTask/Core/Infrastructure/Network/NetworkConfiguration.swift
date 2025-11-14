@@ -7,7 +7,7 @@
 
 import Foundation
 
-//MARK: - NetworkConfiguration
+// MARK: - NetworkConfiguration
 struct NetworkConfiguration {
     // MARK: Properies
     let baseURL: String
@@ -47,4 +47,3 @@ extension NetworkConfiguration {
         )
     }
 }
-
