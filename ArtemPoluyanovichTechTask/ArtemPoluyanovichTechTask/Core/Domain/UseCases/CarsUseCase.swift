@@ -5,14 +5,10 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
+import ComposableArchitecture
+
+@DependencyClient
 struct CarsUseCase {
-    let repository: CarsRepository
-    
-    func fetchManufacturers(page: Int) async throws -> PagedResult<Manufacturer> {
-        return try await repository.fetchManufacturers(page: page, pageSize: 15)
-    }
-    
-    func fetchMainTypes(manufacturerId: Int, page: Int) async throws -> PagedResult<MainType> {
-        return try await repository.fetchMainTypes(manufacturerId: manufacturerId, page: page, pageSize: 15)
-    }
+    var fetchManufacturers: (Int) async throws -> PagedResult<Manufacturer>
+    var fetchMainTypes: (Int, Int) async throws -> PagedResult<MainType>
 }
