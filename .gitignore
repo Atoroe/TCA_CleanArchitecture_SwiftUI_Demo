@@ -1,0 +1,26 @@
+# Xcode
+DerivedData/
+build/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# XCTest results
+*.xcresult
+*.xccovreport
+*.xccovarchive
+
+# Logs
+*.log
+
+# Temporary files
+*.swp
+*.swo
+.DS_Store
+*.orig
