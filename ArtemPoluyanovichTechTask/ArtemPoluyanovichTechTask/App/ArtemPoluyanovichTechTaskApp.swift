@@ -10,8 +10,6 @@ import SwiftUI
 @main
 struct ArtemPoluyanovichTechTaskApp: App {
     var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+        WindowGroup { }
     }
 }
