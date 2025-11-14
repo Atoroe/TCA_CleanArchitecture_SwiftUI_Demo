@@ -15,10 +15,6 @@ struct AppFeature {
         enum RootScreen {
             case manufacturers
         }
-
-        init() {
-            
-        }
     }
 
     enum Action {
@@ -26,7 +22,7 @@ struct AppFeature {
     }
 
     var body: some Reducer<State, Action> {
-        Reduce { state, action in
+        Reduce { _, action in
             switch action {
             
             case .manufacturers:

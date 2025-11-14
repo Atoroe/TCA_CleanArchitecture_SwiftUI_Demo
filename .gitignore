@@ -24,3 +24,6 @@ build/
 *.swo
 .DS_Store
 *.orig
+
+# Secrets
+**/*-Secrets.xcconfig

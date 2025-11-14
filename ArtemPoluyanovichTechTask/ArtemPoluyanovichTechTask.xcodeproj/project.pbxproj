@@ -14,9 +14,22 @@
 		E3B6F6B82EC754130051A8B2 /* ArtemPoluyanovichTechTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtemPoluyanovichTechTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E3B6FBBF2EC76DEF0051A8B2 /* Exceptions for "ArtemPoluyanovichTechTask" folder in "ArtemPoluyanovichTechTask" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Infrastructure/Configurations/Info.plist,
+			);
+			target = E3B6F6B72EC754130051A8B2 /* ArtemPoluyanovichTechTask */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E3B6F6BA2EC754130051A8B2 /* ArtemPoluyanovichTechTask */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E3B6FBBF2EC76DEF0051A8B2 /* Exceptions for "ArtemPoluyanovichTechTask" folder in "ArtemPoluyanovichTechTask" target */,
+			);
 			path = ArtemPoluyanovichTechTask;
 			sourceTree = "<group>";
 		};
@@ -157,7 +170,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E3B6F6C12EC754140051A8B2 /* Debug */ = {
+		E3B6F6C12EC754140051A8B2 /* Debug-Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -219,9 +232,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = "Debug-Development";
 		};
-		E3B6F6C22EC754140051A8B2 /* Release */ = {
+		E3B6F6C22EC754140051A8B2 /* Release-Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -276,10 +289,12 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = "Release-Production";
 		};
-		E3B6F6C42EC754140051A8B2 /* Debug */ = {
+		E3B6F6C42EC754140051A8B2 /* Debug-Development */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E3B6F6BA2EC754130051A8B2 /* ArtemPoluyanovichTechTask */;
+			baseConfigurationReferenceRelativePath = Core/Infrastructure/Configurations/Development.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -287,12 +302,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K8BQ4BV4WH;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ArtemPoluyanovichTechTask/Core/Infrastructure/Configurations/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -308,10 +319,12 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Debug;
+			name = "Debug-Development";
 		};
-		E3B6F6C52EC754140051A8B2 /* Release */ = {
+		E3B6F6C52EC754140051A8B2 /* Release-Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E3B6F6BA2EC754130051A8B2 /* ArtemPoluyanovichTechTask */;
+			baseConfigurationReferenceRelativePath = Core/Infrastructure/Configurations/Production.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -319,12 +332,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K8BQ4BV4WH;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ArtemPoluyanovichTechTask/Core/Infrastructure/Configurations/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -340,7 +349,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = "Release-Production";
 		};
 /* End XCBuildConfiguration section */
 
@@ -348,20 +357,20 @@
 		E3B6F6B32EC754130051A8B2 /* Build configuration list for PBXProject "ArtemPoluyanovichTechTask" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3B6F6C12EC754140051A8B2 /* Debug */,
-				E3B6F6C22EC754140051A8B2 /* Release */,
+				E3B6F6C12EC754140051A8B2 /* Debug-Development */,
+				E3B6F6C22EC754140051A8B2 /* Release-Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release-Production";
 		};
 		E3B6F6C32EC754140051A8B2 /* Build configuration list for PBXNativeTarget "ArtemPoluyanovichTechTask" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3B6F6C42EC754140051A8B2 /* Debug */,
-				E3B6F6C52EC754140051A8B2 /* Release */,
+				E3B6F6C42EC754140051A8B2 /* Debug-Development */,
+				E3B6F6C52EC754140051A8B2 /* Release-Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release-Production";
 		};
 /* End XCConfigurationList section */
 

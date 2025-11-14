@@ -5,8 +5,8 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
-import SwiftUI
 import ComposableArchitecture
+import SwiftUI
 
 @main
 struct ArtemPoluyanovichTechTaskApp: App {
