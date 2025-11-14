@@ -6,10 +6,22 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct ArtemPoluyanovichTechTaskApp: App {
+    
+    let appStore: StoreOf<AppFeature>
+    
+    init() {
+        appStore = Store(initialState: AppFeature.State(), reducer: {
+            AppFeature()._printChanges()
+        })
+    }
+
     var body: some Scene {
-        WindowGroup { }
+        WindowGroup {
+            AppView(store: appStore)
+        }
     }
 }
