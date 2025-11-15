@@ -15,10 +15,21 @@ struct AppFeature {
         enum RootScreen {
             case manufacturers
         }
+        
+        var manufacturers: ManufacturersFeature.State?
+        
+        var currentRootScreen: RootScreen {
+            if manufacturers != nil { return .manufacturers }
+            return .manufacturers
+        }
+        
+        init() {
+            manufacturers = ManufacturersFeature.State()
+        }
     }
 
     enum Action {
-        case manufacturers
+        case manufacturers(ManufacturersFeature.Action)
     }
 
     var body: some Reducer<State, Action> {
@@ -28,6 +39,9 @@ struct AppFeature {
             case .manufacturers:
                 return .none
             }
+        }
+        .ifLet(\.manufacturers, action: \.manufacturers) {
+            ManufacturersFeature()
         }
     }
 }
