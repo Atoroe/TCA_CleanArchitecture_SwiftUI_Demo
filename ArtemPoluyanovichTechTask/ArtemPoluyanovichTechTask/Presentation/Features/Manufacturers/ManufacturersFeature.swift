@@ -92,10 +92,10 @@ struct ManufacturersFeature {
             case let .mainTypeSelected(manufacturer, mainType):
                 state.destination = .alert(
                     AlertState {
-                        TextState("Selected")
+                        TextState(Localization.selectedTitle)
                     } actions: {
                         ButtonState(action: .dismissed) {
-                            TextState("OK")
+                            TextState(Localization.ok)
                         }
                     } message: {
                         TextState("\(manufacturer.name), \(mainType.name)")
@@ -132,3 +132,13 @@ extension ManufacturersFeature {
 }
 
 extension ManufacturersFeature.Destination.State: Equatable {}
+
+extension ManufacturersFeature {
+    enum Localization {
+        static let selectedTitle = LocalizedStringResource(
+            "carSelection.manufacturers.selected",
+            defaultValue: "Selected"
+        )
+        static let ok = LocalizedStringResource("common.ok", defaultValue: "OK")
+    }
+}

@@ -77,6 +77,6 @@ identifier_name:
     - xxl
     - xxxl
     - SF
-    - up
+    - ok
 
 reporter: "xcode"

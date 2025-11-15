@@ -14,7 +14,7 @@ struct ManufacturersView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             contentView
-                .navigationTitle("Select Manufacturer")
+                .navigationTitle(Localization.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
@@ -32,8 +32,8 @@ struct ManufacturersView: View {
         if store.isEmpty {
             EmptyStateView(
                 imageName: "building.2.fill",
-                title: "No manufacturers available",
-                message: "There are no manufacturers to display"
+                title: String(localized: Localization.emptyTitle),
+                message: String(localized: Localization.emptyMessage)
             )
         } else {
             listView
@@ -88,5 +88,25 @@ struct ManufacturersView: View {
                 .padding(SpacingToken.sm)
             Spacer()
         }
+    }
+}
+
+extension ManufacturersView {
+    enum Localization {
+        static let title = LocalizedStringResource(
+            "carSelection.manufacturers.title",
+            defaultValue: "Select Manufacturer"
+        )
+        static let emptyTitle = LocalizedStringResource(
+            "carSelection.manufacturers.emptyTitle",
+            defaultValue: "No manufacturers available"
+        )
+        static let emptyMessage = LocalizedStringResource(
+            "carSelection.manufacturers.emptyMessage",
+            defaultValue: "There are no manufacturers to display"
+        )
+        static let ok = LocalizedStringResource("common.ok", defaultValue: "OK")
+        static let cancel = LocalizedStringResource("common.cancel", defaultValue: "Cancel")
+        static let loading = LocalizedStringResource("common.loading", defaultValue: "Loading…")
     }
 }

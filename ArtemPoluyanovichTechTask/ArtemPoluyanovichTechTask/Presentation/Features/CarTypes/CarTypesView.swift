@@ -13,7 +13,7 @@ struct CarTypesView: View {
 
     var body: some View {
         contentView
-            .navigationTitle("Select Model")
+            .navigationTitle(Localization.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -27,8 +27,8 @@ struct CarTypesView: View {
         if store.isEmpty {
             EmptyStateView(
                 imageName: "car.fill",
-                title: "No car types available",
-                message: "There are no car types for this manufacturer"
+                title: String(localized: Localization.emptyTitle),
+                message: String(localized: Localization.emptyMessage)
             )
         } else {
             listView
@@ -83,5 +83,22 @@ struct CarTypesView: View {
                 .padding(SpacingToken.sm)
             Spacer()
         }
+    }
+}
+
+extension CarTypesView {
+    enum Localization {
+        static let title = LocalizedStringResource(
+            "carSelection.carTypes.title",
+            defaultValue: "Select Model"
+        )
+        static let emptyTitle = LocalizedStringResource(
+            "carSelection.carTypes.emptyTitle",
+            defaultValue: "No car types available"
+        )
+        static let emptyMessage = LocalizedStringResource(
+            "carSelection.carTypes.emptyMessage",
+            defaultValue: "There are no car types for this manufacturer"
+        )
     }
 }
