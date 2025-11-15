@@ -12,14 +12,19 @@ struct ManufacturersView: View {
     @Bindable var store: StoreOf<ManufacturersFeature>
 
     var body: some View {
-        contentView
-            .navigationTitle("Select Manufacturer")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .onAppear {
-                store.send(.onAppear)
-            }
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            contentView
+                .navigationTitle("Select Manufacturer")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .onAppear {
+                    store.send(.onAppear)
+                }
+        } destination: { store in
+            CarTypesView(store: store)
+        }
+        .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
     
     @ViewBuilder

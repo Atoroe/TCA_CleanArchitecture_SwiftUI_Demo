@@ -17,6 +17,9 @@ struct ManufacturersFeature {
         var isLoading: Bool = false
         var hasMorePages: Bool = true
         var errorMessage: String?
+        var path = StackState<CarTypesFeature.State>()
+
+        @Presents var destination: Destination.State?
 
         var isEmpty: Bool {
             !isLoading && manufacturers.isEmpty && errorMessage == nil
@@ -31,9 +34,16 @@ struct ManufacturersFeature {
         case manufacturersLoaded(PagedResult<Manufacturer>)
         case loadFailed(String)
         case selectManufacturer(Manufacturer)
+        case mainTypeSelected(manufacturer: Manufacturer, mainType: MainType)
+        case destination(PresentationAction<Destination.Action>)
+        case path(StackActionOf<CarTypesFeature>)
+        
+        enum Alert: Equatable {
+            case dismissed
+        }
     }
     
-    @Dependency(CarsUseCase.self) var useCase
+    @Dependency(\.carsUseCase) var useCase
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -51,31 +61,74 @@ struct ManufacturersFeature {
                 let pageToLoad = state.currentPage
                 return .run { send in
                     do {
-                        let result = try await useCase.fetchManufacturers(pageToLoad)
+                        let result = try await useCase.fetchManufacturers(page: pageToLoad)
                         await send(.manufacturersLoaded(result))
                     } catch let error as AppError {
-                        // TODO: present toast
+                        await send(.loadFailed(error.localizedDescription))
                     } catch {
-                        // TODO: present toast
+                        await send(.loadFailed(error.localizedDescription))
                     }
                 }
 
             case let .manufacturersLoaded(result):
                 state.isLoading = false
-                state.manufacturers.append(contentsOf: result.items)
-                state.currentPage = result.currentPage + 1
+                let existingIds = Set(state.manufacturers.map { $0.id })
+                let newItems = result.items.filter { !existingIds.contains($0.id) }
+                state.manufacturers.append(contentsOf: newItems)
+                state.currentPage += 1
                 state.hasMorePages = result.hasMorePages
                 return .none
 
             case let .loadFailed(message):
                 state.isLoading = false
                 state.errorMessage = message
+                // TODO: add toast
                 return .none
 
             case let .selectManufacturer(manufacturer):
-                // TODO: - push car types screen
+                state.path.append(CarTypesFeature.State(manufacturer: manufacturer))
+                return .none
+
+            case let .mainTypeSelected(manufacturer, mainType):
+                state.destination = .alert(
+                    AlertState {
+                        TextState("Selected")
+                    } actions: {
+                        ButtonState(action: .dismissed) {
+                            TextState("OK")
+                        }
+                    } message: {
+                        TextState("\(manufacturer.name), \(mainType.name)")
+                    }
+                )
+                return .none
+
+            case .destination(.presented(.alert(.dismissed))):
+                state.destination = nil
+                return .none
+            
+            case let .path(.element(id: _, action: .delegate(.mainTypeSelected(manufacturer, mainType)))):
+                state.path.removeLast()
+                return .send(.mainTypeSelected(manufacturer: manufacturer, mainType: mainType))
+            
+            case .destination, .path:
                 return .none
             }
         }
+        .ifLet(\.$destination, action: \.destination) {
+            Destination.body
+        }
+        .forEach(\.path, action: \.path) {
+            CarTypesFeature()
+        }
     }
 }
+
+extension ManufacturersFeature {
+    @Reducer
+    enum Destination {
+        case alert(AlertState<ManufacturersFeature.Action.Alert>)
+    }
+}
+
+extension ManufacturersFeature.Destination.State: Equatable {}

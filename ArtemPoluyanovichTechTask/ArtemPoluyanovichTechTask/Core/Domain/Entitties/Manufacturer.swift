@@ -8,7 +8,9 @@
 struct Manufacturer: Identifiable, Equatable, Hashable {
     let id: Int
     let name: String
-    
+}
+
+extension Manufacturer {
     nonisolated static func == (lhs: Manufacturer, rhs: Manufacturer) -> Bool {
         lhs.id == rhs.id && lhs.name == rhs.name
     }
