@@ -21,4 +21,10 @@ enum Palette {
         green: 242.0 / 255.0,
         blue: 247.0 / 255.0
     )
+    
+    static let errorToastBackground = Color(
+        red: 220.0 / 255.0,
+        green: 53.0 / 255.0,
+        blue: 69.0 / 255.0
+    )
 }

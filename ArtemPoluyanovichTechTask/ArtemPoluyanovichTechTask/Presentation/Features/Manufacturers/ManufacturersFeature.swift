@@ -17,6 +17,7 @@ struct ManufacturersFeature {
         var isLoading: Bool = false
         var hasMorePages: Bool = true
         var errorMessage: String?
+        var showToast: Bool = false
         var path = StackState<CarTypesFeature.State>()
 
         @Presents var destination: Destination.State?
@@ -33,6 +34,7 @@ struct ManufacturersFeature {
         case loadNextPage
         case manufacturersLoaded(PagedResult<Manufacturer>)
         case loadFailed(String)
+        case toastDismissed
         case selectManufacturer(Manufacturer)
         case mainTypeSelected(manufacturer: Manufacturer, mainType: MainType)
         case destination(PresentationAction<Destination.Action>)
@@ -82,7 +84,14 @@ struct ManufacturersFeature {
             case let .loadFailed(message):
                 state.isLoading = false
                 state.errorMessage = message
-                // TODO: add toast
+                state.showToast = true
+                return .run { send in
+                    try? await Task.sleep(for: .seconds(3))
+                    await send(.toastDismissed)
+                }
+            
+            case .toastDismissed:
+                state.showToast = false
                 return .none
 
             case let .selectManufacturer(manufacturer):

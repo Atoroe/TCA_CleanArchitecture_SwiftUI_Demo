@@ -8,25 +8,31 @@
 import ComposableArchitecture
 import SwiftUI
 
+// MARK: - CarTypesView
 struct CarTypesView: View {
     let store: StoreOf<CarTypesFeature>
 
+    // MARK: Body
     var body: some View {
         contentView
             .navigationTitle(Localization.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .overlay(alignment: .bottom) {
+                toastOverlay
+            }
             .onAppear {
                 store.send(.onAppear)
             }
     }
     
+    // MARK: Private properties
+    
     @ViewBuilder
     private var contentView: some View {
         if store.isEmpty {
             EmptyStateView(
-                imageName: "car.fill",
                 title: String(localized: Localization.emptyTitle),
                 message: String(localized: Localization.emptyMessage)
             )
@@ -84,8 +90,23 @@ struct CarTypesView: View {
             Spacer()
         }
     }
+    
+    @ViewBuilder
+    private var toastOverlay: some View {
+        if let errorMessage = store.errorMessage {
+            ToastView(
+                message: errorMessage,
+                isPresented: Binding(
+                    get: { store.showToast },
+                    set: { _ in store.send(.toastDismissed) }
+                )
+            )
+            .ignoresSafeArea(edges: .bottom)
+        }
+    }
 }
 
+// MARK: CarTypesView Extension
 extension CarTypesView {
     enum Localization {
         static let title = LocalizedStringResource(

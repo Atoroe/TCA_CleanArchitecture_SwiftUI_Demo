@@ -8,9 +8,11 @@
 import ComposableArchitecture
 import SwiftUI
 
+// MARK: - ManufacturersView
 struct ManufacturersView: View {
     @Bindable var store: StoreOf<ManufacturersFeature>
 
+    // MARK: Body
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             contentView
@@ -18,6 +20,9 @@ struct ManufacturersView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
+                .overlay(alignment: .bottom) {
+                    toastOverlay
+                }
                 .onAppear {
                     store.send(.onAppear)
                 }
@@ -27,11 +32,11 @@ struct ManufacturersView: View {
         .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
     
+    // MARK: Private properties
     @ViewBuilder
     private var contentView: some View {
         if store.isEmpty {
             EmptyStateView(
-                imageName: "building.2.fill",
                 title: String(localized: Localization.emptyTitle),
                 message: String(localized: Localization.emptyMessage)
             )
@@ -89,8 +94,23 @@ struct ManufacturersView: View {
             Spacer()
         }
     }
+    
+    @ViewBuilder
+    private var toastOverlay: some View {
+        if let errorMessage = store.errorMessage {
+            ToastView(
+                message: errorMessage,
+                isPresented: Binding(
+                    get: { store.showToast },
+                    set: { _ in store.send(.toastDismissed) }
+                )
+            )
+            .ignoresSafeArea(edges: .bottom)
+        }
+    }
 }
 
+// MARK: ManufacturersView Extension
 extension ManufacturersView {
     enum Localization {
         static let title = LocalizedStringResource(

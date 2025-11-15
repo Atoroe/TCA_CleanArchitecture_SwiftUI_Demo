@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct EmptyStateView: View {
-    let imageName: String
     let title: String
     let message: String
     
     var body: some View {
         VStack(spacing: SpacingToken.sm) {
-            Image(systemName: imageName)
+            Image.SF.car
                 .font(.system(size: 64, weight: .light))
                 .foregroundColor(.secondary)
             

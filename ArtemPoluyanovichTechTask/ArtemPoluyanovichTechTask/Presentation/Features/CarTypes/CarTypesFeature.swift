@@ -18,6 +18,7 @@ struct CarTypesFeature {
         var isLoading: Bool = false
         var hasMorePages: Bool = true
         var errorMessage: String?
+        var showToast: Bool = false
 
         var isEmpty: Bool {
             !isLoading && mainTypes.isEmpty && errorMessage == nil
@@ -33,6 +34,7 @@ struct CarTypesFeature {
         case loadNextPage
         case mainTypesLoaded(PagedResult<MainType>)
         case loadFailed(String)
+        case toastDismissed
         case selectMainType(MainType)
         case delegate(Delegate)
 
@@ -81,7 +83,13 @@ struct CarTypesFeature {
             case let .loadFailed(message):
                 state.isLoading = false
                 state.errorMessage = message
-                // TODO: add toast
+                return .run { send in
+                    try? await Task.sleep(for: .seconds(3))
+                    await send(.toastDismissed)
+                }
+            
+            case .toastDismissed:
+                state.showToast = false
                 return .none
 
             case let .selectMainType(mainType):
