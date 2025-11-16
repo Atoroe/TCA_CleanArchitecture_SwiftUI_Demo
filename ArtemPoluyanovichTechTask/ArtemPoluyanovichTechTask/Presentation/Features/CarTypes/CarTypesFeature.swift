@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Clocks
 import Foundation
 
 @Reducer
@@ -44,6 +45,7 @@ struct CarTypesFeature {
     }
 
     @Dependency(\.carsUseCase) var useCase
+    @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -83,8 +85,9 @@ struct CarTypesFeature {
             case let .loadFailed(message):
                 state.isLoading = false
                 state.errorMessage = message
+                state.showToast = true
                 return .run { send in
-                    try? await Task.sleep(for: .seconds(3))
+                    try? await clock.sleep(for: .seconds(3))
                     await send(.toastDismissed)
                 }
             
