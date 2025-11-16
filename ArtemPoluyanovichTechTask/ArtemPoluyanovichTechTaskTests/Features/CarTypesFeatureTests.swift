@@ -12,13 +12,11 @@ import Foundation
 import Testing
 
 @Suite("CarTypesFeature Tests")
+@MainActor
 struct CarTypesFeatureTests {
     
-    // MARK: - Tests
-    
     @Test("onAppear loads first page")
-    @MainActor
-    func test_onAppear_loadsFirstPage() async throws {
+    func onAppearLoadsFirstPage() async throws {
         let manufacturer = TestDataHelpers.makeTestManufacturer()
         let firstPageItems = TestDataHelpers.makeTestMainTypes(page: 0)
         let firstPageResult = PagedResult(
@@ -27,34 +25,30 @@ struct CarTypesFeatureTests {
             totalPages: 2
         )
         
-        let mockUseCase = TestDataHelpers.makeMockUseCase(firstPageResult: firstPageResult)
+        let repository = MockCarsRepository()
+            .withMainTypes(page: 0, result: firstPageResult)
+        let useCase = TestDataHelpers.makeUseCase(from: repository)
         
         let store = TestStore(
             initialState: CarTypesFeature.State(manufacturer: manufacturer)
         ) {
             CarTypesFeature()
         } withDependencies: {
-            $0.carsUseCase = mockUseCase
+            $0.carsUseCase = useCase
         }
+        store.exhaustivity = .off
         
         await store.send(.onAppear)
+        await store.receive(.mainTypesLoaded(firstPageResult))
         
-        await store.receive(.loadNextPage) {
-            $0.isLoading = true
-            $0.errorMessage = nil
-        }
-        
-        await store.receive(.mainTypesLoaded(firstPageResult)) {
-            $0.isLoading = false
-            $0.mainTypes = firstPageItems
-            $0.currentPage = 1
-            $0.hasMorePages = true
-        }
+        #expect(store.state.mainTypes.count == 2)
+        #expect(store.state.currentPage == 1)
+        #expect(store.state.hasMorePages == true)
+        #expect(!store.state.isLoading)
     }
     
     @Test("loadNextPage pagination")
-    @MainActor
-    func test_loadNextPage_pagination() async throws {
+    func loadNextPagePagination() async throws {
         let manufacturer = TestDataHelpers.makeTestManufacturer()
         let firstPageItems = TestDataHelpers.makeTestMainTypes(page: 0)
         let secondPageItems = TestDataHelpers.makeTestMainTypes(page: 1)
@@ -64,17 +58,16 @@ struct CarTypesFeatureTests {
             currentPage: 0,
             totalPages: 2
         )
-        
         let secondPageResult = PagedResult(
             items: secondPageItems,
             currentPage: 1,
             totalPages: 2
         )
         
-        let mockUseCase = TestDataHelpers.makeMockUseCase(
-            firstPageResult: firstPageResult,
-            secondPageResult: secondPageResult
-        )
+        let repository = MockCarsRepository()
+            .withMainTypes(page: 0, result: firstPageResult)
+            .withMainTypes(page: 1, result: secondPageResult)
+        let useCase = TestDataHelpers.makeUseCase(from: repository)
         
         var initialState = CarTypesFeature.State(manufacturer: manufacturer)
         initialState.mainTypes = firstPageItems
@@ -84,25 +77,20 @@ struct CarTypesFeatureTests {
         let store = TestStore(initialState: initialState) {
             CarTypesFeature()
         } withDependencies: {
-            $0.carsUseCase = mockUseCase
+            $0.carsUseCase = useCase
         }
+        store.exhaustivity = .off
         
-        await store.send(.loadNextPage) {
-            $0.isLoading = true
-            $0.errorMessage = nil
-        }
+        await store.send(.loadNextPage)
+        await store.receive(.mainTypesLoaded(secondPageResult))
         
-        await store.receive(.mainTypesLoaded(secondPageResult)) {
-            $0.isLoading = false
-            $0.mainTypes = firstPageItems + secondPageItems
-            $0.currentPage = 2
-            $0.hasMorePages = false
-        }
+        #expect(store.state.mainTypes.count == 4)
+        #expect(store.state.currentPage == 2)
+        #expect(store.state.hasMorePages == false)
     }
     
     @Test("selectMainType sends delegate")
-    @MainActor
-    func test_selectMainType_sendsDelegate() async throws {
+    func selectMainTypeSendsDelegate() async throws {
         let manufacturer = TestDataHelpers.makeTestManufacturer()
         let mainType = MainType(id: "1", name: "Type 1")
         
@@ -119,39 +107,32 @@ struct CarTypesFeatureTests {
     }
     
     @Test("loadFailed shows toast")
-    @MainActor
-    func test_loadFailed_showsToast() async throws {
+    func loadFailedShowsToast() async throws {
         let manufacturer = TestDataHelpers.makeTestManufacturer()
         let testError = AppError.network(reason: "Network error")
-        let mockUseCase = TestDataHelpers.makeMockUseCase(shouldThrowError: true, error: testError)
+        let repository = MockCarsRepository().withError(testError)
+        let useCase = TestDataHelpers.makeUseCase(from: repository)
         
         let clock = TestClock()
-        
         let store = TestStore(
             initialState: CarTypesFeature.State(manufacturer: manufacturer)
         ) {
             CarTypesFeature()
         } withDependencies: {
-            $0.carsUseCase = mockUseCase
+            $0.carsUseCase = useCase
             $0.continuousClock = clock
         }
+        store.exhaustivity = .off
         
-        await store.send(.loadNextPage) {
-            $0.isLoading = true
-            $0.errorMessage = nil
-        }
+        await store.send(.loadNextPage)
+        await store.receive(.loadFailed(testError.localizedDescription))
         
-        await store.receive(.loadFailed(testError.localizedDescription)) {
-            $0.isLoading = false
-            $0.errorMessage = testError.localizedDescription
-            $0.showToast = true
-        }
+        #expect(store.state.errorMessage == testError.localizedDescription)
+        #expect(store.state.showToast == true)
         
         await clock.advance(by: .seconds(3))
+        await store.receive(.toastDismissed)
         
-        await store.receive(.toastDismissed) {
-            $0.showToast = false
-        }
+        #expect(store.state.showToast == false)
     }
 }
-

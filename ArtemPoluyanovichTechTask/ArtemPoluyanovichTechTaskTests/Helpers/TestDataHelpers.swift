@@ -14,6 +14,23 @@ enum TestDataHelpers {
         Manufacturer(id: 1, name: "Test Manufacturer")
     }
     
+    nonisolated static func makeTestManufacturers(page: Int) -> [Manufacturer] {
+        switch page {
+        case 0:
+            return [
+                Manufacturer(id: 1, name: "BMW"),
+                Manufacturer(id: 2, name: "Audi")
+            ]
+        case 1:
+            return [
+                Manufacturer(id: 3, name: "Mercedes"),
+                Manufacturer(id: 4, name: "Volkswagen")
+            ]
+        default:
+            return []
+        }
+    }
+    
     nonisolated static func makeTestMainTypes(page: Int) -> [MainType] {
         switch page {
         case 0:
@@ -32,20 +49,8 @@ enum TestDataHelpers {
     }
     
     @MainActor
-    static func makeMockUseCase(
-        firstPageResult: PagedResult<MainType>? = nil,
-        secondPageResult: PagedResult<MainType>? = nil,
-        shouldThrowError: Bool = false,
-        error: AppError? = nil
-    ) -> CarsUseCase {
-        return CarsUseCase(
-            repository: MockCarsRepository(
-                firstPageResult: firstPageResult,
-                secondPageResult: secondPageResult,
-                shouldThrowError: shouldThrowError,
-                error: error
-            )
-        )
+    static func makeUseCase(from repository: MockCarsRepository) -> CarsUseCase {
+        return CarsUseCase(repository: repository)
     }
 }
 

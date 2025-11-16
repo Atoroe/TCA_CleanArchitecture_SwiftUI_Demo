@@ -9,27 +9,44 @@
 import Foundation
 
 struct MockCarsRepository: CarsRepository {
-    let firstPageResult: PagedResult<MainType>?
-    let secondPageResult: PagedResult<MainType>?
-    let shouldThrowError: Bool
-    let error: AppError?
+    private var manufacturersPages: [Int: PagedResult<Manufacturer>] = [:]
+    private var mainTypesPages: [Int: PagedResult<MainType>] = [:]
+    private var error: AppError?
+    
+    init() {}
+    
+    func withManufacturers(page: Int, result: PagedResult<Manufacturer>) -> Self {
+        var copy = self
+        copy.manufacturersPages[page] = result
+        return copy
+    }
+    
+    func withMainTypes(page: Int, result: PagedResult<MainType>) -> Self {
+        var copy = self
+        copy.mainTypesPages[page] = result
+        return copy
+    }
+    
+    func withError(_ error: AppError) -> Self {
+        var copy = self
+        copy.error = error
+        return copy
+    }
     
     func fetchManufacturers(page: Int, pageSize: Int) async throws -> PagedResult<Manufacturer> {
-        throw AppError.unknown(message: "Not implemented in mock")
+        if let error {
+            throw error
+        }
+        
+        return manufacturersPages[page] ?? PagedResult(items: [], currentPage: page, totalPages: 0)
     }
     
     func fetchMainTypes(manufacturerId: Int, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
-        if shouldThrowError {
-            throw error ?? AppError.network(reason: "Test error")
+        if let error {
+            throw error
         }
         
-        if page == 0, let result = firstPageResult {
-            return result
-        } else if page == 1, let result = secondPageResult {
-            return result
-        }
-        
-        return PagedResult(items: [], currentPage: page, totalPages: 0)
+        return mainTypesPages[page] ?? PagedResult(items: [], currentPage: page, totalPages: 0)
     }
 }
 

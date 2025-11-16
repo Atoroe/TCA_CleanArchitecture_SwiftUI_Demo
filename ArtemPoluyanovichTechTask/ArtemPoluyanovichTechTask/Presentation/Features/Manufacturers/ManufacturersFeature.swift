@@ -29,7 +29,7 @@ struct ManufacturersFeature {
         init() {}
     }
 
-    enum Action {
+    enum Action: Equatable {
         case onAppear
         case loadNextPage
         case manufacturersLoaded(PagedResult<Manufacturer>)
@@ -46,6 +46,7 @@ struct ManufacturersFeature {
     }
     
     @Dependency(\.carsUseCase) var useCase
+    @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -86,7 +87,7 @@ struct ManufacturersFeature {
                 state.errorMessage = message
                 state.showToast = true
                 return .run { send in
-                    try? await Task.sleep(for: .seconds(3))
+                    try? await clock.sleep(for: .seconds(3))
                     await send(.toastDismissed)
                 }
             
@@ -117,6 +118,7 @@ struct ManufacturersFeature {
                 return .none
             
             case let .path(.element(id: _, action: .delegate(.mainTypeSelected(manufacturer, mainType)))):
+                guard !state.path.isEmpty else { return .none }
                 state.path.removeLast()
                 return .send(.mainTypeSelected(manufacturer: manufacturer, mainType: mainType))
             
@@ -141,6 +143,7 @@ extension ManufacturersFeature {
 }
 
 extension ManufacturersFeature.Destination.State: Equatable {}
+extension ManufacturersFeature.Destination.Action: Equatable {}
 
 extension ManufacturersFeature {
     enum Localization {
