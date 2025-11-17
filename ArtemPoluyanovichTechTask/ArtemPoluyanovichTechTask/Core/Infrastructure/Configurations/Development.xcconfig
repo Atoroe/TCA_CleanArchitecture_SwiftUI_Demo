@@ -1,0 +1,15 @@
+//
+//  Development.xcconfig
+//  ArtemPoluyanovichTechTask
+//
+//  Created by Artiom Poluyanovich on 14/11/2025.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+#include "Secrets/Development-Secrets.xcconfig"
+
+// Environment-specific variables
+ENVIRONMENT = dev
+APP_DISPLAY_NAME = TestTask DEV
