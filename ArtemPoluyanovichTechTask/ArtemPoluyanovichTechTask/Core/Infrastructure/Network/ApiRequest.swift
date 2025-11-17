@@ -29,12 +29,12 @@ struct ApiRequest: ApiRequestProtocol {
     
     // MARK: Initializer
     init(
-        baseURL: String,
+        baseURL: String = "",
         path: String,
-        queryParameters: [String: Any]?,
+        queryParameters: [String: Any]? = nil,
         method: RequestMethod,
-        parameters: [String: Any]?,
-        headers: [String: String]
+        parameters: [String: Any]? = nil,
+        headers: [String: String] = [:]
     ) {
         self.baseURL = baseURL
         self.path = path

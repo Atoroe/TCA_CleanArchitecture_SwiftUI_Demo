@@ -12,51 +12,47 @@ enum ErrorMapper {
     static func toAppError(_ networkError: NetworkError) -> AppError {
         switch networkError {
         case .httpError(let statusCode, let data):
-            let errorMessage = extractErrorMessage(from: data)
-            return .api(code: statusCode, message: errorMessage)
-            
+            return mapHttpError(statusCode: statusCode, data: data)
         case .unauthorized:
             return .api(code: 401, message: "Unauthorized access")
-            
         case .forbidden:
             return .api(code: 403, message: "Access forbidden")
-            
         case .notFound:
             return .api(code: 404, message: "Resource not found")
-            
-        case .timeout:
-            return .network(reason: "Request timeout")
-            
-        case .noConnection:
-            return .network(reason: "No internet connection")
-            
-        case .decodingError(let message):
-            return .unknown(message: message)
-            
-        case .encodingError(let message):
-            return .unknown(message: message)
-            
-        case .cancelled:
-            return .network(reason: "Request cancelled")
-            
-        case .invalidURL(let url):
-            return .network(reason: "Invalid URL: \(url)")
-            
-        case .invalidRequest(let reason):
-            return .network(reason: "Invalid request: \(reason)")
-            
-        case .invalidResponse:
-            return .network(reason: "Invalid response from server")
-            
-        case .noData:
-            return .network(reason: "No data received from server")
-            
-        case .unknown(let message):
+        case .timeout, .noConnection, .cancelled, .invalidURL, .invalidRequest, .invalidResponse, .noData:
+            return mapNetworkError(networkError)
+        case .decodingError(let message), .encodingError(let message), .unknown(let message):
             return .unknown(message: message)
         }
     }
     
     // MARK: - Private Helpers
+    
+    private static func mapHttpError(statusCode: Int, data: Data?) -> AppError {
+        let errorMessage = extractErrorMessage(from: data)
+        return .api(code: statusCode, message: errorMessage)
+    }
+    
+    private static func mapNetworkError(_ error: NetworkError) -> AppError {
+        switch error {
+        case .timeout:
+            return .network(reason: "Request timeout")
+        case .noConnection:
+            return .network(reason: "No internet connection")
+        case .cancelled:
+            return .network(reason: "Request cancelled")
+        case .invalidURL(let url):
+            return .network(reason: "Invalid URL: \(url)")
+        case .invalidRequest(let reason):
+            return .network(reason: "Invalid request: \(reason)")
+        case .invalidResponse:
+            return .network(reason: "Invalid response from server")
+        case .noData:
+            return .network(reason: "No data received from server")
+        default:
+            fatalError("Unexpected network error type in mapNetworkError")
+        }
+    }
     
     private static func extractErrorMessage(from data: Data?) -> String? {
         guard let data else { return nil }

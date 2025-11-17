@@ -160,7 +160,7 @@ final class RestService: RestServiceProtocol {
         var headers = configuration.defaultHeaders
         request.headers.forEach { headers[$0.key] = $0.value }
         
-        headers.forEach() {
+        headers.forEach {
             urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
         }
         if let parameters = request.parameters {

@@ -14,33 +14,7 @@ final class ErrorHandlerInterceptor: ResponseInterceptorProtocol {
     
     func interceptResponse(_ response: URLResponse?, data: Data?, error: Error?) async throws -> (Data?, Error?) {
         guard let error = error else {
-            if let httpResponse = response as? HTTPURLResponse {
-                let statusCode = httpResponse.statusCode
-                
-                if (200...299).contains(statusCode) {
-                    return (data, nil)
-                }
-                
-                // Map specific HTTP status codes to NetworkError
-                switch statusCode {
-                case 401:
-                    return (data, NetworkError.unauthorized)
-                case 403:
-                    return (data, NetworkError.forbidden)
-                case 404:
-                    return (data, NetworkError.notFound)
-                case 400...499:
-                    // Other client errors
-                    return (data, NetworkError.httpError(statusCode: statusCode, data: data))
-                case 500...599:
-                    // Server errors
-                    return (data, NetworkError.httpError(statusCode: statusCode, data: data))
-                default:
-                    return (data, NetworkError.httpError(statusCode: statusCode, data: data))
-                }
-            }
-            
-            return (data, nil)
+            return handleHttpResponse(response, data: data)
         }
         
         // Transform common errors to NetworkError
@@ -57,6 +31,37 @@ final class ErrorHandlerInterceptor: ResponseInterceptorProtocol {
     }
     
     // MARK: - Private Methods
+    
+    private func handleHttpResponse(_ response: URLResponse?, data: Data?) -> (Data?, Error?) {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return (data, nil)
+        }
+        
+        let statusCode = httpResponse.statusCode
+        
+        if (200...299).contains(statusCode) {
+            return (data, nil)
+        }
+        
+        return mapHttpStatusCode(statusCode, data: data)
+    }
+    
+    private func mapHttpStatusCode(_ statusCode: Int, data: Data?) -> (Data?, Error?) {
+        switch statusCode {
+        case 401:
+            return (data, NetworkError.unauthorized)
+        case 403:
+            return (data, NetworkError.forbidden)
+        case 404:
+            return (data, NetworkError.notFound)
+        case 400...499:
+            return (data, NetworkError.httpError(statusCode: statusCode, data: data))
+        case 500...599:
+            return (data, NetworkError.httpError(statusCode: statusCode, data: data))
+        default:
+            return (data, NetworkError.httpError(statusCode: statusCode, data: data))
+        }
+    }
     
     private func extractErrorMessage(from data: Data?) -> String? {
         guard let data = data,

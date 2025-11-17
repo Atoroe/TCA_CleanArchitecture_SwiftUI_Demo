@@ -13,7 +13,7 @@ struct EmptyStateView: View {
     
     var body: some View {
         VStack(spacing: SpacingToken.sm) {
-            Image.SF.car
+            Image.SFSymbol.car
                 .font(.system(size: 64, weight: .light))
                 .foregroundColor(.secondary)
             

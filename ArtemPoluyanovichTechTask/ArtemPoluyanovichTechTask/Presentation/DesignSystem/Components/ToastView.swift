@@ -25,7 +25,7 @@ struct ToastView: View {
                         
                         VStack(alignment: .leading, spacing: SpacingToken.xxs) {
                             HStack(spacing: SpacingToken.xxs) {
-                                Image.SF.circleExclamationmark
+                                Image.SFSymbol.circleExclamationmark
                                     .font(.system(size: 20, weight: .medium))
                                     .foregroundColor(.white)
                                 

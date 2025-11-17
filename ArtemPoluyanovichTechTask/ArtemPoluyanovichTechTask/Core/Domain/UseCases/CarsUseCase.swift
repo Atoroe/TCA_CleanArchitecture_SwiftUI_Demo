@@ -10,10 +10,6 @@ import ComposableArchitecture
 struct CarsUseCase {
     let repository: CarsRepository
     
-    init(repository: CarsRepository) {
-        self.repository = repository
-    }
-    
     func fetchManufacturers(page: Int) async throws -> PagedResult<Manufacturer> {
         return try await repository.fetchManufacturers(page: page, pageSize: 15)
     }

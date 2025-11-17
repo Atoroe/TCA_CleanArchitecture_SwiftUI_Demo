@@ -27,7 +27,7 @@ struct ListCell<Content: View>: View {
             content
             if showChevron {
                 Spacer()
-                Image.SF.chevronRight
+                Image.SFSymbol.chevronRight
                     .foregroundColor(.blue)
                     .font(.system(size: 14, weight: .medium))
                     .padding(.trailing, SpacingToken.sm)

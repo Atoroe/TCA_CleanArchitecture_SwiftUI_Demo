@@ -17,15 +17,12 @@ final class CarsRepositoryImpl: CarsRepository {
 
     func fetchManufacturers(page: Int, pageSize: Int) async throws -> PagedResult<Manufacturer> {
         let request = ApiRequest(
-            baseURL: "",
             path: CarsRepositoryUrlPaths.manufacturers,
             queryParameters: [
                 "page": String(page),
                 "pageSize": String(pageSize)
             ],
             method: .GET,
-            parameters: nil,
-            headers: [:]
         )
         
         do {
@@ -47,7 +44,6 @@ final class CarsRepositoryImpl: CarsRepository {
     
     func fetchMainTypes(manufacturerId: Int, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
         let request = ApiRequest(
-            baseURL: "",
             path: CarsRepositoryUrlPaths.mainTypes,
             queryParameters: [
                 "manufacturer": String(manufacturerId),
@@ -55,8 +51,6 @@ final class CarsRepositoryImpl: CarsRepository {
                 "pageSize": String(pageSize)
             ],
             method: .GET,
-            parameters: nil,
-            headers: [:]
         )
         
         do {

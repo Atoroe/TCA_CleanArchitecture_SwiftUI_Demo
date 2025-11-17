@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Image {
-    enum SF {
+    enum SFSymbol {
         static let chevronRight = Image(systemName: "chevron.right")
         static let car = Image(systemName: "car.fill")
         static let circleExclamationmark = Image(systemName: "exclamationmark.circle.fill")
