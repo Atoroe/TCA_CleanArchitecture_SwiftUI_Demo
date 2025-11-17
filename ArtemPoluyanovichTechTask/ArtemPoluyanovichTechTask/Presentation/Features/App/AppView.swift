@@ -18,8 +18,7 @@ struct AppView: View {
             ) { manufacturersStore in
                 ManufacturersView(store: manufacturersStore)
             } else: {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView(style: .fullScreen)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: store.currentRootScreen)

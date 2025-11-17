@@ -16,13 +16,12 @@ struct ManufacturersView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             contentView
-                .navigationTitle(Localization.title)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-                .overlay(alignment: .bottom) {
-                    toastOverlay
-                }
+                .standardNavigationStyle(title: Localization.title)
+                .toast(
+                    errorMessage: store.errorMessage,
+                    showToast: store.showToast,
+                    onDismiss: { store.send(.toastDismissed) }
+                )
                 .onAppear {
                     store.send(.onAppear)
                 }
@@ -56,7 +55,7 @@ struct ManufacturersView: View {
             }
 
             if store.isLoading {
-                loadingView
+                LoadingView(style: .inline)
             }
         }
         .listStyle(.plain)
@@ -86,28 +85,6 @@ struct ManufacturersView: View {
         }
     }
     
-    private var loadingView: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-                .padding(SpacingToken.sm)
-            Spacer()
-        }
-    }
-    
-    @ViewBuilder
-    private var toastOverlay: some View {
-        if let errorMessage = store.errorMessage {
-            ToastView(
-                message: errorMessage,
-                isPresented: Binding(
-                    get: { store.showToast },
-                    set: { _ in store.send(.toastDismissed) }
-                )
-            )
-            .ignoresSafeArea(edges: .bottom)
-        }
-    }
 }
 
 // MARK: ManufacturersView Extension
