@@ -44,11 +44,10 @@ The project already includes solid test coverage for:
   - Data layer mappers (MainTypeModelMapperTests, ManufacturerModelMapperTests)
   - TCA Features (CarTypesFeatureTests, ManufacturersFeatureTests)  
   - Test helpers and mock repositories (TestDataHelpers, MockCarsRepository)
-```
 
 ## Project Structure
 
-<pre>
+```
 App/
 └── ArtemPoluyanovichTechTaskApp.swift      # App entry point
 
@@ -60,13 +59,13 @@ Core/
 Presentation/
 ├── DesignSystem/                           # UI components & styling
 └── Features/                               # TCA features (State/Action/Reducer + View)
-</pre>
+```
 
 ### Architecture Flow
 
 #### Core Layer Interactions
 
-<pre>
+```
 User Action
     ↓
 Presentation Layer (TCA Feature)
@@ -78,21 +77,21 @@ Data Layer (Repository)
 Infrastructure (Network Service)
     ↓
 External API
-</pre>
+```
 
 #### Presentation Layer (TCA Pattern)
 
-<pre>
+```
 SwiftUI View → Sends Action → TCA Reducer
        ↑                          ↓
        ←── Updates State ──────────
        ↑                          ↓  
        ←── Returns Effect ────────→ Domain Layer
-</pre>
+```
 
 #### Detailed Data Flow
 
-<pre>
+```
 [View] --(User Action)--> [TCA Feature] --(Call UseCase)--> [Domain]
      ↑                       ↓                               ↓
      ←──(State Update)───────┘                               ↓
@@ -101,7 +100,7 @@ SwiftUI View → Sends Action → TCA Reducer
                                                         [Network Service]
                                                                ↓
                                                           [External API]
-</pre>
+```
 
 ### Layer Responsibilities
 
