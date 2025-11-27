@@ -31,6 +31,7 @@ struct CarTypesFeature {
 
     enum Action: Equatable {
         case onAppear
+
         case loadNextPage
         case mainTypesLoaded(PagedResult<MainType>)
         case loadFailed(String)
@@ -41,6 +42,10 @@ struct CarTypesFeature {
         enum Delegate: Equatable {
             case mainTypeSelected(manufacturer: Manufacturer, mainType: MainType)
         }
+    }
+    
+    nonisolated enum CancelID: Hashable, Sendable {
+        case loading
     }
 
     @Dependency(\.carsUseCase) var useCase
@@ -65,12 +70,15 @@ struct CarTypesFeature {
                     do {
                         let result = try await useCase.fetchMainTypes(manufacturerId: manufacturerId, page: pageToLoad)
                         await send(.mainTypesLoaded(result))
+                    } catch is CancellationError {
+                        return
                     } catch let error as AppError {
                         await send(.loadFailed(error.localizedDescription))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }
                 }
+                .cancellable(id: CancelID.loading, cancelInFlight: true) 
 
             case let .mainTypesLoaded(result):
                 state.isLoading = false
@@ -99,6 +107,7 @@ struct CarTypesFeature {
 
             case .delegate:
                 return .none
+
             }
         }
     }
