@@ -75,7 +75,8 @@ struct CarTypesView: View {
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
         .onAppear {
-            if index == store.mainTypes.count - 2 && store.hasMorePages && !store.isLoading {
+            let threshold = max(2, store.mainTypes.count / 10)
+            if index >= store.mainTypes.count - threshold && store.hasMorePages && !store.isLoading {
                 store.send(.loadNextPage)
             }
         }
