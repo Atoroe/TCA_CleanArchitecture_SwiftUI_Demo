@@ -6,7 +6,7 @@
 //
 
 struct Manufacturer: Identifiable, Equatable, Hashable {
-    let id: Int
+    let id: String
     let name: String
 }
 
