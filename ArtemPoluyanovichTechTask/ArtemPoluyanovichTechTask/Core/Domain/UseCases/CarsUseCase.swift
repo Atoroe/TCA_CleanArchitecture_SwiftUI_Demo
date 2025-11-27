@@ -14,7 +14,7 @@ struct CarsUseCase {
         return try await repository.fetchManufacturers(page: page, pageSize: 15)
     }
     
-    func fetchMainTypes(manufacturerId: Int, page: Int) async throws -> PagedResult<MainType> {
+    func fetchMainTypes(manufacturerId: String, page: Int) async throws -> PagedResult<MainType> {
         return try await repository.fetchMainTypes(manufacturerId: manufacturerId, page: page, pageSize: 15)
     }
 }

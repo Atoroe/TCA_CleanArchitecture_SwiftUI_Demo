@@ -6,18 +6,15 @@
 //
 
 struct ManufacturerModel: Codable, Equatable {
-    let id: Int
+    let id: String
     let name: String
     
-    init?(key: String, value: String) {
-        guard let id = Int(key) else {
-            return nil
-        }
-        self.id = id
+    init(key: String, value: String) {
+        self.id = key
         self.name = value
     }
     
-    init(id: Int, name: String) {
+    init(id: String, name: String) {
         self.id = id
         self.name = name
     }

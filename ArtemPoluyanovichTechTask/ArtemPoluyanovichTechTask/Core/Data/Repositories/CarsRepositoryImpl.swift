@@ -42,7 +42,7 @@ final class CarsRepositoryImpl: CarsRepository {
         }
     }
     
-    func fetchMainTypes(manufacturerId: Int, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
+    func fetchMainTypes(manufacturerId: String, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
         let request = ApiRequest(
             path: CarsRepositoryUrlPaths.mainTypes,
             queryParameters: [
