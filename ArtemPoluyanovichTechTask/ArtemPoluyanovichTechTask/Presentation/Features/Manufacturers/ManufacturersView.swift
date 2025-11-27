@@ -79,7 +79,8 @@ struct ManufacturersView: View {
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
         .onAppear {
-            if index == store.manufacturers.count - 2 && store.hasMorePages && !store.isLoading {
+            let threshold = max(2, store.manufacturers.count / 10)
+            if index >= store.manufacturers.count - threshold && store.hasMorePages && !store.isLoading {
                 store.send(.loadNextPage)
             }
         }

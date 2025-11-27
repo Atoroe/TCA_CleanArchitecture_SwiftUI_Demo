@@ -45,6 +45,10 @@ struct ManufacturersFeature {
         }
     }
     
+    nonisolated enum CancelID: Hashable, Sendable {
+        case loading
+    }
+    
     @Dependency(\.carsUseCase) var useCase
     @Dependency(\.continuousClock) var clock
 
@@ -66,12 +70,15 @@ struct ManufacturersFeature {
                     do {
                         let result = try await useCase.fetchManufacturers(page: pageToLoad)
                         await send(.manufacturersLoaded(result))
+                    } catch is CancellationError {
+                        return
                     } catch let error as AppError {
                         await send(.loadFailed(error.localizedDescription))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }
                 }
+                .cancellable(id: CancelID.loading, cancelInFlight: true)
 
             case let .manufacturersLoaded(result):
                 state.isLoading = false
