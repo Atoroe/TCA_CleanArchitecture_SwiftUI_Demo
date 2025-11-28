@@ -94,7 +94,8 @@ struct ManufacturersFeature {
                 state.errorMessage = message
                 state.showToast = true
                 return .run { send in
-                    try? await clock.sleep(for: .seconds(3))
+                    let duration = max(3, Double(message.count) / 20)
+                    try? await clock.sleep(for: .seconds(duration))
                     await send(.toastDismissed)
                 }
             

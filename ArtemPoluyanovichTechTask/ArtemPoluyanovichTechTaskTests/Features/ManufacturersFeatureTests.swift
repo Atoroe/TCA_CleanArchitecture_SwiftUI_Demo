@@ -46,8 +46,8 @@ struct ManufacturersFeatureTests {
     
     @Test("loadNextPage pagination")
     func loadNextPagePagination() async throws {
-        let page0Items = [Manufacturer(id: 1, name: "BMW")]
-        let page1Items = [Manufacturer(id: 2, name: "Audi")]
+        let page0Items = [Manufacturer(id: "1", name: "BMW")]
+        let page1Items = [Manufacturer(id: "2", name: "Audi")]
         
         let page0Result = PagedResult(items: page0Items, currentPage: 0, totalPages: 3)
         let page1Result = PagedResult(items: page1Items, currentPage: 1, totalPages: 3)
@@ -78,15 +78,15 @@ struct ManufacturersFeatureTests {
     
     @Test("loadNextPage deduplicates items")
     func loadNextPageDeduplicatesItems() async throws {
-        let existing = Manufacturer(id: 1, name: "BMW")
+        let existing = Manufacturer(id: "1", name: "BMW")
         var state = ManufacturersFeature.State()
         state.manufacturers = [existing]
         state.currentPage = 1
         
         let duplicateAndNew = PagedResult(
             items: [
-                Manufacturer(id: 1, name: "BMW"),
-                Manufacturer(id: 2, name: "Audi")
+                Manufacturer(id: "1", name: "BMW"),
+                Manufacturer(id: "2", name: "Audi")
             ],
             currentPage: 1,
             totalPages: 3
@@ -107,8 +107,8 @@ struct ManufacturersFeatureTests {
         await store.receive(.manufacturersLoaded(duplicateAndNew))
         
         #expect(store.state.manufacturers.count == 2)
-        #expect(store.state.manufacturers.contains { $0.id == 1 })
-        #expect(store.state.manufacturers.contains { $0.id == 2 })
+        #expect(store.state.manufacturers.contains { $0.id == "1" })
+        #expect(store.state.manufacturers.contains { $0.id == "2" })
     }
     
     @Test("loadFailed shows toast")
@@ -132,7 +132,8 @@ struct ManufacturersFeatureTests {
         #expect(store.state.errorMessage == testError.localizedDescription)
         #expect(store.state.showToast == true)
         
-        await clock.advance(by: .seconds(3))
+        let expectedDuration = max(3, Double(testError.localizedDescription.count) / 20)
+        await clock.advance(by: .seconds(expectedDuration))
         await store.receive(.toastDismissed)
         
         #expect(store.state.showToast == false)
@@ -140,7 +141,7 @@ struct ManufacturersFeatureTests {
     
     @Test("selectManufacturer navigates to CarTypes")
     func selectManufacturerNavigatesToCarTypes() async throws {
-        let manufacturer = Manufacturer(id: 120, name: "BMW")
+        let manufacturer = Manufacturer(id: "120", name: "BMW")
         var state = ManufacturersFeature.State()
         state.manufacturers = [manufacturer]
         
@@ -155,7 +156,7 @@ struct ManufacturersFeatureTests {
     
     @Test("child delegate shows alert and pops navigation")
     func childDelegateShowsAlertAndPopsNavigation() async throws {
-        let manufacturer = Manufacturer(id: 120, name: "BMW")
+        let manufacturer = Manufacturer(id: "120", name: "BMW")
         let mainType = MainType(id: "45", name: "X5")
         
         var state = ManufacturersFeature.State()
