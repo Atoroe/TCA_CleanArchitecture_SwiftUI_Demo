@@ -45,7 +45,14 @@ struct ToastView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .background(Palette.errorToastBackground)
-                    .clipShape(TopRoundedRectangle(cornerRadius: CornerRadiusToken.toast))
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: CornerRadiusToken.toast,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: CornerRadiusToken.toast
+                        )
+                    )
                     .shadow(ShadowToken.toast)
                 }
             }
@@ -53,40 +60,6 @@ struct ToastView: View {
             .transition(TransitionToken.slideFromBottom)
             .animation(AnimationToken.Semantic.spring, value: isPresented)
         }
-    }
-}
-
-struct TopRoundedRectangle: Shape {
-    var cornerRadius: CGFloat
-    
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        
-        let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
-        let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
-        
-        path.move(to: CGPoint(x: rect.minX, y: rect.minY + cornerRadius))
-        path.addArc(
-            center: CGPoint(x: rect.minX + cornerRadius, y: rect.minY + cornerRadius),
-            radius: cornerRadius,
-            startAngle: .degrees(180),
-            endAngle: .degrees(270),
-            clockwise: false
-        )
-        path.addLine(to: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY))
-        path.addArc(
-            center: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY + cornerRadius),
-            radius: cornerRadius,
-            startAngle: .degrees(270),
-            endAngle: .degrees(0),
-            clockwise: false
-        )
-        path.addLine(to: bottomRight)
-        path.addLine(to: bottomLeft)
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + cornerRadius))
-        path.closeSubpath()
-        
-        return path
     }
 }
 

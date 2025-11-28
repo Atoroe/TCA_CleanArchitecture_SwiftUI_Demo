@@ -41,7 +41,7 @@ struct MockCarsRepository: CarsRepository {
         return manufacturersPages[page] ?? PagedResult(items: [], currentPage: page, totalPages: 0)
     }
     
-    func fetchMainTypes(manufacturerId: Int, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
+    func fetchMainTypes(manufacturerId: String, page: Int, pageSize: Int) async throws -> PagedResult<MainType> {
         if let error {
             throw error
         }
