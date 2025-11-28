@@ -14,29 +14,29 @@ struct ManufacturerModelMapperTests {
     
     @Test("toDomain converts single model to domain entity")
     func toDomainConvertsSingleModel() {
-        let model = ManufacturerModel(id: 123, name: "BMW")
+        let model = ManufacturerModel(id: "123", name: "BMW")
         let domain = model.toDomain()
         
-        #expect(domain.id == 123)
+        #expect(domain.id == "123")
         #expect(domain.name == "BMW")
     }
     
     @Test("toDomain converts array of models to domain entities")
     func toDomainConvertsArrayOfModels() {
         let models = [
-            ManufacturerModel(id: 1, name: "BMW"),
-            ManufacturerModel(id: 2, name: "Audi"),
-            ManufacturerModel(id: 3, name: "Mercedes")
+            ManufacturerModel(id: "1", name: "BMW"),
+            ManufacturerModel(id: "2", name: "Audi"),
+            ManufacturerModel(id: "3", name: "Mercedes")
         ]
         
         let domains = ManufacturerModel.toDomain(models)
         
         #expect(domains.count == 3)
-        #expect(domains[0].id == 1)
+        #expect(domains[0].id == "1")
         #expect(domains[0].name == "BMW")
-        #expect(domains[1].id == 2)
+        #expect(domains[1].id == "2")
         #expect(domains[1].name == "Audi")
-        #expect(domains[2].id == 3)
+        #expect(domains[2].id == "3")
         #expect(domains[2].name == "Mercedes")
     }
     
@@ -59,11 +59,11 @@ struct ManufacturerModelMapperTests {
         let models = ManufacturerModel.fromWkdaDictionary(wkda)
         
         #expect(models.count == 3)
-        #expect(models[0].id == 1)
+        #expect(models[0].id == "1")
         #expect(models[0].name == "Audi")
-        #expect(models[1].id == 2)
+        #expect(models[1].id == "2")
         #expect(models[1].name == "Mercedes")
-        #expect(models[2].id == 3)
+        #expect(models[2].id == "3")
         #expect(models[2].name == "BMW")
     }
     
@@ -79,9 +79,9 @@ struct ManufacturerModelMapperTests {
         let models = ManufacturerModel.fromWkdaDictionary(wkda)
         
         #expect(models.count == 2)
-        #expect(models[0].id == 123)
+        #expect(models[0].id == "123")
         #expect(models[0].name == "Valid")
-        #expect(models[1].id == 456)
+        #expect(models[1].id == "456")
         #expect(models[1].name == "Also valid")
     }
     
@@ -96,9 +96,9 @@ struct ManufacturerModelMapperTests {
         let models = ManufacturerModel.fromWkdaDictionary(wkda)
         
         #expect(models.count == 3)
-        #expect(models[0].id == 1)
-        #expect(models[1].id == 10)
-        #expect(models[2].id == 100)
+        #expect(models[0].id == "1")
+        #expect(models[1].id == "10")
+        #expect(models[2].id == "100")
     }
     
     @Test("fromWkdaDictionary handles empty dictionary")
@@ -130,7 +130,7 @@ struct ManufacturerModelMapperTests {
         let models = ManufacturerModel.fromWkdaDictionary(wkda)
         
         #expect(models.count == 1)
-        #expect(models[0].id == 999)
+        #expect(models[0].id == "999")
         #expect(models[0].name == "Test Manufacturer")
     }
 }

@@ -130,7 +130,8 @@ struct CarTypesFeatureTests {
         #expect(store.state.errorMessage == testError.localizedDescription)
         #expect(store.state.showToast == true)
         
-        await clock.advance(by: .seconds(3))
+        let expectedDuration = max(3, Double(testError.localizedDescription.count) / 20)
+        await clock.advance(by: .seconds(expectedDuration))
         await store.receive(.toastDismissed)
         
         #expect(store.state.showToast == false)
