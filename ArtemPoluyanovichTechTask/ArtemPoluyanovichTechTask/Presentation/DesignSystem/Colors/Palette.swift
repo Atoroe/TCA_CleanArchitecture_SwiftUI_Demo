@@ -8,23 +8,15 @@
 import SwiftUI
 
 enum Palette {
-    static let navigationBackground = Color(
-        red: 245.0 / 255.0,
-        green: 247.0 / 255.0,
-        blue: 248.0 / 255.0
-    )
+    /// Light: #F5F7F8, Dark: #1E2326
+    static let navigationBackground = Color("NavigationBackground")
     
-    static let cellWhite = Color.white
+    /// Light: #FFFFFF, Dark: #282D32
+    static let cellWhite = Color("CellWhite")
     
-    static let cellAlternate = Color(
-        red: 242.0 / 255.0,
-        green: 242.0 / 255.0,
-        blue: 247.0 / 255.0
-    )
+    /// Light: #F2F2F7, Dark: #32373C
+    static let cellAlternate = Color("CellAlternate")
     
-    static let errorToastBackground = Color(
-        red: 220.0 / 255.0,
-        green: 53.0 / 255.0,
-        blue: 69.0 / 255.0
-    )
+    /// Light & Dark: #DC3545
+    static let errorToastBackground = Color("ErrorToastBackground")
 }
