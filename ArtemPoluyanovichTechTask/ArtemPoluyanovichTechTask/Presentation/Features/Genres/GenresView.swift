@@ -1,5 +1,5 @@
 //
-//  ManufacturersView.swift
+//  GenresView.swift
 //  ArtemPoluyanovichTechTask
 //
 //  Created by Artiom Poluyanovich on 15/11/2025.
@@ -8,9 +8,9 @@
 import ComposableArchitecture
 import SwiftUI
 
-// MARK: - ManufacturersView
-struct ManufacturersView: View {
-    @Bindable var store: StoreOf<ManufacturersFeature>
+// MARK: - GenresView
+struct GenresView: View {
+    @Bindable var store: StoreOf<GenresFeature>
 
     // MARK: Body
     var body: some View {
@@ -26,7 +26,7 @@ struct ManufacturersView: View {
                     store.send(.onAppear)
                 }
         } destination: { store in
-            CarTypesView(store: store)
+            GamesView(store: store)
         }
         .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
@@ -44,14 +44,14 @@ struct ManufacturersView: View {
         }
     }
     
-    private var indexedManufacturers: [(Int, Manufacturer)] {
-        store.manufacturers.enumerated().map { ($0.offset, $0.element) }
+    private var indexedGenres: [(Int, Genre)] {
+        store.genres.enumerated().map { ($0.offset, $0.element) }
     }
     
     private var listView: some View {
         List {
-            ForEach(indexedManufacturers, id: \.1.id) { index, manufacturer in
-                rowView(index: index, manufacturer: manufacturer)
+            ForEach(indexedGenres, id: \.1.id) { index, genre in
+                rowView(index: index, genre: genre)
             }
 
             if store.isLoading {
@@ -61,17 +61,17 @@ struct ManufacturersView: View {
         .listStyle(.plain)
     }
     
-    private func rowView(index: Int, manufacturer: Manufacturer) -> some View {
+    private func rowView(index: Int, genre: Genre) -> some View {
         let backgroundColor = index % 2 == 0 ? Palette.cellWhite : Palette.cellAlternate
         
         return Button {
-            store.send(.selectManufacturer(manufacturer))
+            store.send(.selectGenre(genre))
         } label: {
             ListCell(
                 backgroundColor: backgroundColor,
                 showChevron: true
             ) {
-                Text(manufacturer.name)
+                Text(genre.name)
                     .foregroundColor(.primary)
             }
         }
@@ -79,7 +79,8 @@ struct ManufacturersView: View {
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
         .onAppear {
-            if index == store.manufacturers.count - 2 && store.hasMorePages && !store.isLoading {
+            let threshold = max(3, store.genres.count / 10)
+            if index >= store.genres.count - threshold && store.hasMorePages && !store.isLoading {
                 store.send(.loadNextPage)
             }
         }
@@ -87,20 +88,20 @@ struct ManufacturersView: View {
     
 }
 
-// MARK: ManufacturersView Extension
-extension ManufacturersView {
+// MARK: GenresView Extension
+extension GenresView {
     enum Localization {
         static let title = LocalizedStringResource(
-            "carSelection.manufacturers.title",
-            defaultValue: "Select Manufacturer"
+            "carSelection.genres.title",
+            defaultValue: "Select Genre"
         )
         static let emptyTitle = LocalizedStringResource(
-            "carSelection.manufacturers.emptyTitle",
-            defaultValue: "No manufacturers available"
+            "carSelection.genres.emptyTitle",
+            defaultValue: "No genres available"
         )
         static let emptyMessage = LocalizedStringResource(
-            "carSelection.manufacturers.emptyMessage",
-            defaultValue: "There are no manufacturers to display"
+            "carSelection.genres.emptyMessage",
+            defaultValue: "There are no genres to display"
         )
         static let ok = LocalizedStringResource("common.ok", defaultValue: "OK")
         static let cancel = LocalizedStringResource("common.cancel", defaultValue: "Cancel")

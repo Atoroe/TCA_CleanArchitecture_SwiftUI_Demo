@@ -1,5 +1,5 @@
 //
-//  ManufacturersFeature.swift
+//  GenresFeature.swift
 //  ArtemPoluyanovichTechTask
 //
 //  Created by Artiom Poluyanovich on 15/11/2025.
@@ -9,21 +9,21 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct ManufacturersFeature {
+struct GenresFeature {
     @ObservableState
     struct State: Equatable {
-        var manufacturers: [Manufacturer] = []
+        var genres: [Genre] = []
         var currentPage: Int = 0
         var isLoading: Bool = false
         var hasMorePages: Bool = true
         var errorMessage: String?
         var showToast: Bool = false
-        var path = StackState<CarTypesFeature.State>()
+        var path = StackState<GamesFeature.State>()
 
         @Presents var destination: Destination.State?
 
         var isEmpty: Bool {
-            !isLoading && manufacturers.isEmpty && errorMessage == nil
+            !isLoading && genres.isEmpty && errorMessage == nil
         }
 
         init() {}
@@ -32,27 +32,31 @@ struct ManufacturersFeature {
     enum Action: Equatable {
         case onAppear
         case loadNextPage
-        case manufacturersLoaded(PagedResult<Manufacturer>)
+        case genresLoaded(PagedResult<Genre>)
         case loadFailed(String)
         case toastDismissed
-        case selectManufacturer(Manufacturer)
-        case mainTypeSelected(manufacturer: Manufacturer, mainType: MainType)
+        case selectGenre(Genre)
+        case gameSelected(genre: Genre, game: Game)
         case destination(PresentationAction<Destination.Action>)
-        case path(StackActionOf<CarTypesFeature>)
+        case path(StackActionOf<GamesFeature>)
         
         enum Alert: Equatable {
             case dismissed
         }
     }
     
-    @Dependency(\.carsUseCase) var useCase
+    nonisolated enum CancelID: Hashable, Sendable {
+        case loading
+    }
+    
+    @Dependency(\.gamesUseCase) var useCase
     @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.manufacturers.isEmpty && !state.isLoading else { return .none }
+                guard state.genres.isEmpty && !state.isLoading else { return .none }
                 return .run { send in
                     await send(.loadNextPage)
                 }
@@ -64,20 +68,23 @@ struct ManufacturersFeature {
                 let pageToLoad = state.currentPage
                 return .run { send in
                     do {
-                        let result = try await useCase.fetchManufacturers(page: pageToLoad)
-                        await send(.manufacturersLoaded(result))
+                        let result = try await useCase.fetchGenres(page: pageToLoad)
+                        await send(.genresLoaded(result))
+                    } catch is CancellationError {
+                        return
                     } catch let error as AppError {
                         await send(.loadFailed(error.localizedDescription))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }
                 }
+                .cancellable(id: CancelID.loading, cancelInFlight: true)
 
-            case let .manufacturersLoaded(result):
+            case let .genresLoaded(result):
                 state.isLoading = false
-                let existingIds = Set(state.manufacturers.map { $0.id })
+                let existingIds = Set(state.genres.map { $0.id })
                 let newItems = result.items.filter { !existingIds.contains($0.id) }
-                state.manufacturers.append(contentsOf: newItems)
+                state.genres.append(contentsOf: newItems)
                 state.currentPage += 1
                 state.hasMorePages = result.hasMorePages
                 return .none
@@ -87,7 +94,8 @@ struct ManufacturersFeature {
                 state.errorMessage = message
                 state.showToast = true
                 return .run { send in
-                    try? await clock.sleep(for: .seconds(3))
+                    let duration = max(3, Double(message.count) / 20)
+                    try? await clock.sleep(for: .seconds(duration))
                     await send(.toastDismissed)
                 }
             
@@ -95,11 +103,11 @@ struct ManufacturersFeature {
                 state.showToast = false
                 return .none
 
-            case let .selectManufacturer(manufacturer):
-                state.path.append(CarTypesFeature.State(manufacturer: manufacturer))
+            case let .selectGenre(genre):
+                state.path.append(GamesFeature.State(genre: genre))
                 return .none
 
-            case let .mainTypeSelected(manufacturer, mainType):
+            case let .gameSelected(genre, game):
                 state.destination = .alert(
                     AlertState {
                         TextState(Localization.selectedTitle)
@@ -108,7 +116,7 @@ struct ManufacturersFeature {
                             TextState(Localization.ok)
                         }
                     } message: {
-                        TextState("\(manufacturer.name), \(mainType.name)")
+                        TextState("\(genre.name), \(game.name)")
                     }
                 )
                 return .none
@@ -117,10 +125,10 @@ struct ManufacturersFeature {
                 state.destination = nil
                 return .none
             
-            case let .path(.element(id: _, action: .delegate(.mainTypeSelected(manufacturer, mainType)))):
-                guard !state.path.isEmpty else { return .none }
+            case let .path(.element(id: _, action: .delegate(.didSelectGame(game)))):
+                guard !state.path.isEmpty, let genre = state.path.last?.genre else { return .none }
                 state.path.removeLast()
-                return .send(.mainTypeSelected(manufacturer: manufacturer, mainType: mainType))
+                return .send(.gameSelected(genre: genre, game: game))
             
             case .destination, .path:
                 return .none
@@ -130,25 +138,25 @@ struct ManufacturersFeature {
             Destination.body
         }
         .forEach(\.path, action: \.path) {
-            CarTypesFeature()
+            GamesFeature()
         }
     }
 }
 
-extension ManufacturersFeature {
+extension GenresFeature {
     @Reducer
     enum Destination {
-        case alert(AlertState<ManufacturersFeature.Action.Alert>)
+        case alert(AlertState<GenresFeature.Action.Alert>)
     }
 }
 
-extension ManufacturersFeature.Destination.State: Equatable {}
-extension ManufacturersFeature.Destination.Action: Equatable {}
+extension GenresFeature.Destination.State: Equatable {}
+extension GenresFeature.Destination.Action: Equatable {}
 
-extension ManufacturersFeature {
+extension GenresFeature {
     enum Localization {
         static let selectedTitle = LocalizedStringResource(
-            "carSelection.manufacturers.selected",
+            "carSelection.genres.selected",
             defaultValue: "Selected"
         )
         static let ok = LocalizedStringResource("common.ok", defaultValue: "OK")
