@@ -1,5 +1,5 @@
 //
-//  CarTypesFeature.swift
+//  GamesFeature.swift
 //  ArtemPoluyanovichTechTask
 //
 //  Created by Artiom Poluyanovich on 15/11/2025.
@@ -9,11 +9,11 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct CarTypesFeature {
+struct GamesFeature {
     @ObservableState
     struct State: Equatable, Hashable {
-        let manufacturer: Manufacturer
-        var mainTypes: [MainType] = []
+        let genre: Genre
+        var games: [Game] = []
         var currentPage: Int = 0
         var isLoading: Bool = false
         var hasMorePages: Bool = true
@@ -21,11 +21,11 @@ struct CarTypesFeature {
         var showToast: Bool = false
 
         var isEmpty: Bool {
-            !isLoading && mainTypes.isEmpty && errorMessage == nil
+            !isLoading && games.isEmpty && errorMessage == nil
         }
 
-        init(manufacturer: Manufacturer) {
-            self.manufacturer = manufacturer
+        init(genre: Genre) {
+            self.genre = genre
         }
     }
 
@@ -33,14 +33,14 @@ struct CarTypesFeature {
         case onAppear
 
         case loadNextPage
-        case mainTypesLoaded(PagedResult<MainType>)
+        case gamesLoaded(PagedResult<Game>)
         case loadFailed(String)
         case toastDismissed
-        case selectMainType(MainType)
+        case selectGame(Game)
         case delegate(Delegate)
 
         enum Delegate: Equatable {
-            case mainTypeSelected(manufacturer: Manufacturer, mainType: MainType)
+            case didSelectGame(Game)
         }
     }
     
@@ -48,14 +48,14 @@ struct CarTypesFeature {
         case loading
     }
 
-    @Dependency(\.carsUseCase) var useCase
+    @Dependency(\.gamesUseCase) var useCase
     @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.mainTypes.isEmpty else { return .none }
+                guard state.games.isEmpty else { return .none }
                 return .run { send in
                     await send(.loadNextPage)
                 }
@@ -66,11 +66,11 @@ struct CarTypesFeature {
                 state.isLoading = true
                 state.errorMessage = nil
                 let pageToLoad = state.currentPage
-                let manufacturerId = state.manufacturer.id
+                let genreId = state.genre.id
                 return .run { send in
                     do {
-                        let result = try await useCase.fetchMainTypes(manufacturerId: manufacturerId, page: pageToLoad)
-                        await send(.mainTypesLoaded(result))
+                        let result = try await useCase.fetchGames(genreId: genreId, page: pageToLoad)
+                        await send(.gamesLoaded(result))
                     } catch is CancellationError {
                         return
                     } catch let error as AppError {
@@ -81,11 +81,11 @@ struct CarTypesFeature {
                 }
                 .cancellable(id: CancelID.loading, cancelInFlight: true) 
 
-            case let .mainTypesLoaded(result):
+            case let .gamesLoaded(result):
                 state.isLoading = false
-                let existingIds = Set(state.mainTypes.map { $0.id })
+                let existingIds = Set(state.games.map { $0.id })
                 let newItems = result.items.filter { !existingIds.contains($0.id) }
-                state.mainTypes.append(contentsOf: newItems)
+                state.games.append(contentsOf: newItems)
                 state.currentPage += 1
                 state.hasMorePages = result.hasMorePages
                 return .none
@@ -104,8 +104,8 @@ struct CarTypesFeature {
                 state.showToast = false
                 return .none
 
-            case let .selectMainType(mainType):
-                return .send(.delegate(.mainTypeSelected(manufacturer: state.manufacturer, mainType: mainType)))
+            case let .selectGame(game):
+                return .send(.delegate(.didSelectGame(game)))
 
             case .delegate:
                 return .none

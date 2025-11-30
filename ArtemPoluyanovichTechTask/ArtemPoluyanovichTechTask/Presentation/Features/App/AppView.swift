@@ -14,9 +14,9 @@ struct AppView: View {
     var body: some View {
         Group {
             IfLetStore(
-                store.scope(state: \.manufacturers, action: \.manufacturers)
-            ) { manufacturersStore in
-                ManufacturersView(store: manufacturersStore)
+                store.scope(state: \.genres, action: \.genres)
+            ) { genresStore in
+                GenresView(store: genresStore)
             } else: {
                 LoadingView(style: .fullScreen)
             }
