@@ -12,7 +12,9 @@ struct PagedResult<T: Equatable>: Equatable {
     let currentPage: Int
     let totalPages: Int
     
-    let hasMorePages: Bool
+    var hasMorePages: Bool {
+        currentPage < totalPages - 1
+    }
     
     var isFirstPage: Bool {
         currentPage == 0
@@ -22,10 +24,9 @@ struct PagedResult<T: Equatable>: Equatable {
         currentPage >= totalPages - 1
     }
     
-    init(items: [T], currentPage: Int, totalPages: Int, hasMorePages: Bool? = nil) {
+    init(items: [T], currentPage: Int, totalPages: Int) {
         self.items = items
         self.currentPage = currentPage
         self.totalPages = totalPages
-        self.hasMorePages = hasMorePages ?? (currentPage < totalPages - 1)
     }
 }

@@ -6,7 +6,7 @@
 //
 
 final class NetworkServiceFactory {
-    static func createRestService() -> RestServiceProtocol {
+    static func createCarsRestService() -> RestServiceProtocol {
         let config = NetworkConfiguration.fromEnvironment()
         
         let interceptors: [NetworkInterceptorProtocol] = [

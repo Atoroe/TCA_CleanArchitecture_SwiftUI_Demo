@@ -1,5 +1,5 @@
 //
-//  GamesView.swift
+//  CarTypesView.swift
 //  ArtemPoluyanovichTechTask
 //
 //  Created by Artiom Poluyanovich on 15/11/2025.
@@ -8,9 +8,9 @@
 import ComposableArchitecture
 import SwiftUI
 
-// MARK: - GamesView
-struct GamesView: View {
-    @Bindable var store: StoreOf<GamesFeature>
+// MARK: - CarTypesView
+struct CarTypesView: View {
+    let store: StoreOf<CarTypesFeature>
 
     // MARK: Body
     var body: some View {
@@ -40,14 +40,14 @@ struct GamesView: View {
         }
     }
     
-    private var indexedGames: [(Int, Game)] {
-        store.games.enumerated().map { ($0.offset, $0.element) }
+    private var indexedTypes: [(Int, MainType)] {
+        store.mainTypes.enumerated().map { ($0.offset, $0.element) }
     }
     
     private var listView: some View {
         List {
-            ForEach(indexedGames, id: \.1.id) { index, game in
-                rowView(index: index, game: game)
+            ForEach(indexedTypes, id: \.1.id) { index, mainType in
+                rowView(index: index, mainType: mainType)
             }
 
             if store.isLoading {
@@ -57,17 +57,17 @@ struct GamesView: View {
         .listStyle(.plain)
     }
     
-    private func rowView(index: Int, game: Game) -> some View {
+    private func rowView(index: Int, mainType: MainType) -> some View {
         let backgroundColor = index % 2 == 0 ? Palette.cellWhite : Palette.cellAlternate
         
         return Button {
-            store.send(.selectGame(game))
+            store.send(.selectMainType(mainType))
         } label: {
             ListCell(
                 backgroundColor: backgroundColor,
                 showChevron: false
             ) {
-                Text(game.name)
+                Text(mainType.name)
                     .foregroundColor(.primary)
             }
         }
@@ -75,8 +75,8 @@ struct GamesView: View {
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
         .onAppear {
-            let threshold = max(3, store.games.count / 10)
-            if index >= store.games.count - threshold && store.hasMorePages && !store.isLoading {
+            let threshold = max(2, store.mainTypes.count / 10)
+            if index >= store.mainTypes.count - threshold && store.hasMorePages && !store.isLoading {
                 store.send(.loadNextPage)
             }
         }
@@ -84,20 +84,20 @@ struct GamesView: View {
     
 }
 
-// MARK: GamesView Extension
-extension GamesView {
+// MARK: CarTypesView Extension
+extension CarTypesView {
     enum Localization {
         static let title = LocalizedStringResource(
-            "carSelection.games.title",
-            defaultValue: "Select Game"
+            "carSelection.carTypes.title",
+            defaultValue: "Select Model"
         )
         static let emptyTitle = LocalizedStringResource(
-            "carSelection.games.emptyTitle",
-            defaultValue: "No games available"
+            "carSelection.carTypes.emptyTitle",
+            defaultValue: "No car types available"
         )
         static let emptyMessage = LocalizedStringResource(
-            "carSelection.games.emptyMessage",
-            defaultValue: "There are no games for this genre"
+            "carSelection.carTypes.emptyMessage",
+            defaultValue: "There are no car types for this manufacturer"
         )
     }
 }

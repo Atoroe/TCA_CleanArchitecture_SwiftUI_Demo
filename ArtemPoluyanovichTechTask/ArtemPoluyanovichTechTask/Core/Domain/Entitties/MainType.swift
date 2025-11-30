@@ -1,17 +1,17 @@
 //
-//  Genre.swift
+//  MainType.swift
 //  ArtemPoluyanovichTechTask
 //
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
-struct Genre: Identifiable, Equatable, Hashable {
+struct MainType: Identifiable, Equatable, Hashable {
     let id: String
     let name: String
 }
 
-extension Genre {
-    nonisolated static func == (lhs: Genre, rhs: Genre) -> Bool {
+extension MainType {
+    nonisolated static func == (lhs: MainType, rhs: MainType) -> Bool {
         lhs.id == rhs.id && lhs.name == rhs.name
     }
 }

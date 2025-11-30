@@ -13,7 +13,7 @@ final class AuthInterceptor: RequestInterceptorProtocol {
     private let apiKey: String
     private let queryParameterName: String
     
-    init(apiKey: String, queryParameterName: String = "key") {
+    init(apiKey: String, queryParameterName: String = "wa_key") {
         self.apiKey = apiKey
         self.queryParameterName = queryParameterName
     }

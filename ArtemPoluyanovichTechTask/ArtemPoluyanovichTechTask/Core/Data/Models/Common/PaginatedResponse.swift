@@ -7,18 +7,21 @@
 
 import Foundation
 
+// MARK: - Paginated Response
 struct PaginatedResponse<T: Codable & Equatable>: Codable, Equatable {
-    let count: Int
-    let next: String?
-    let previous: String?
-    let results: [T]
+    let page: Int
+    let pageSize: Int
+    let totalPageCount: Int
+    let wkda: T
     
     var hasMorePages: Bool {
-        next != nil
+        page < totalPageCount - 1
     }
     
-    func calculateTotalPages(pageSize: Int) -> Int {
-        guard pageSize > 0 else { return 0 }
-        return Int(ceil(Double(count) / Double(pageSize)))
+    init(page: Int, pageSize: Int, totalPageCount: Int, wkda: T) {
+        self.page = page
+        self.pageSize = pageSize
+        self.totalPageCount = totalPageCount
+        self.wkda = wkda
     }
 }

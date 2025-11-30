@@ -13,35 +13,35 @@ struct AppFeature {
     @ObservableState
     struct State: Equatable {
         enum RootScreen {
-            case genres
+            case manufacturers
         }
         
-        var genres: GenresFeature.State?
+        var manufacturers: ManufacturersFeature.State?
         
         var currentRootScreen: RootScreen {
-            if genres != nil { return .genres }
-            return .genres
+            if manufacturers != nil { return .manufacturers }
+            return .manufacturers
         }
         
         init() {
-            genres = GenresFeature.State()
+            manufacturers = ManufacturersFeature.State()
         }
     }
 
     enum Action {
-        case genres(GenresFeature.Action)
+        case manufacturers(ManufacturersFeature.Action)
     }
 
     var body: some Reducer<State, Action> {
         Reduce { _, action in
             switch action {
             
-            case .genres:
+            case .manufacturers:
                 return .none
             }
         }
-        .ifLet(\.genres, action: \.genres) {
-            GenresFeature()
+        .ifLet(\.manufacturers, action: \.manufacturers) {
+            ManufacturersFeature()
         }
     }
 }

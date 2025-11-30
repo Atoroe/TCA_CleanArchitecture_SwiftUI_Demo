@@ -10,33 +10,47 @@ import Foundation
 
 enum TestDataHelpers {
     
-    nonisolated static func makeTestGenre() -> Genre {
-        Genre(id: "4", name: "Action")
+    nonisolated static func makeTestManufacturer() -> Manufacturer {
+        Manufacturer(id: "1", name: "Test Manufacturer")
     }
     
-    nonisolated static func makeTestGame() -> Game {
-        Game(id: "123", name: "Test Game")
+    nonisolated static func makeTestManufacturers(page: Int) -> [Manufacturer] {
+        switch page {
+        case 0:
+            return [
+                Manufacturer(id: "1", name: "BMW"),
+                Manufacturer(id: "2", name: "Audi")
+            ]
+        case 1:
+            return [
+                Manufacturer(id: "3", name: "Mercedes"),
+                Manufacturer(id: "4", name: "Volkswagen")
+            ]
+        default:
+            return []
+        }
     }
     
-    nonisolated static func makeTestGenres(page: Int) -> [Genre] {
-        let baseId = page * 2
-        return [
-            Genre(id: "\(baseId + 1)", name: "Genre \(baseId + 1)"),
-            Genre(id: "\(baseId + 2)", name: "Genre \(baseId + 2)")
-        ]
-    }
-    
-    nonisolated static func makeTestGames(page: Int) -> [Game] {
-        let baseId = page * 2
-        return [
-            Game(id: "\(baseId + 1)", name: "Game \(baseId + 1)"),
-            Game(id: "\(baseId + 2)", name: "Game \(baseId + 2)")
-        ]
+    nonisolated static func makeTestMainTypes(page: Int) -> [MainType] {
+        switch page {
+        case 0:
+            return [
+                MainType(id: "1", name: "Type 1"),
+                MainType(id: "2", name: "Type 2")
+            ]
+        case 1:
+            return [
+                MainType(id: "3", name: "Type 3"),
+                MainType(id: "4", name: "Type 4")
+            ]
+        default:
+            return []
+        }
     }
     
     @MainActor
-    static func makeUseCase(from repository: GamesRepository) -> GamesUseCase {
-        GamesUseCase(repository: repository)
+    static func makeUseCase(from repository: MockCarsRepository) -> CarsUseCase {
+        return CarsUseCase(repository: repository)
     }
 }
 
