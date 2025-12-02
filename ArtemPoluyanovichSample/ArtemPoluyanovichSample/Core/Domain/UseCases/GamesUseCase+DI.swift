@@ -9,7 +9,10 @@ import ComposableArchitecture
 
 // MARK: - TCA Dependency
 extension GamesUseCase: DependencyKey {
-    static let liveValue = GamesUseCase.create()
+    static var liveValue: GamesUseCase {
+        @Dependency(\.gamesRepository) var repository
+        return GamesUseCase(repository: repository)
+    }
 }
 
 extension DependencyValues {
