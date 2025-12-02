@@ -1,0 +1,81 @@
+# === SwiftLint configuration ===
+# Designed for solo/pet projects — clean code without over-policing
+#
+# === How to disable rules inline ===
+# Disable rule for one line:
+#   let value = dict["key"]! // swiftlint:disable:this force_unwrapping
+#
+# Disable rule for next line:
+#   // swiftlint:disable:next force_unwrapping
+#   let value = dict["key"]!
+#
+# Disable rule for code block:
+#   // swiftlint:disable force_unwrapping
+#   let value1 = dict["key"]!
+#   let value2 = array[0]!
+#   // swiftlint:enable force_unwrapping
+#
+# Disable multiple rules:
+#   // swiftlint:disable force_unwrapping force_cast
+#   let value = (dict["key"]! as! String)
+#   // swiftlint:enable force_unwrapping force_cast
+#
+# Disable all rules for file (at top of file):
+#   // swiftlint:disable all
+
+disabled_rules:
+  - trailing_whitespace
+  - todo
+  - line_length
+  - type_body_length
+  - function_body_length
+  - nesting
+  - trailing_comma
+  - opening_brace
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - force_unwrapping
+  - redundant_nil_coalescing
+  - sorted_imports
+
+analyzer_rules:
+  - unused_import
+
+excluded:
+  - Pods
+  - Generated
+  - .build
+  - ArtemPoluyanovichSample.xcodeproj
+
+force_cast: error
+force_try: warning
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+file_length:
+  warning: 600
+  error: 800
+
+identifier_name:
+  excluded:
+    - id
+    - URL
+    - vm
+    - x
+    - y
+    - xxxs
+    - xxs
+    - xs
+    - sm
+    - md
+    - lg
+    - xl
+    - xxl
+    - xxxl
+    - ok
+
+reporter: "xcode"
