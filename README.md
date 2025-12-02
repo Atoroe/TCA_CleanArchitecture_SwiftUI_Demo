@@ -1,8 +1,8 @@
 # Overview
 
-iOS Technical Task application built with modern Swift architecture patterns.
+iOS application example demonstrating modern Swift architecture patterns with RAWG Video Games API integration.
 
-This README is structured to help you quickly understand the layering, how to run the project, and what is covered by tests today, while also outlining concrete, realistic next steps. If you’d like, I can prioritize any of the improvements above (e.g., grid UI, more tests) and implement them next.
+This README is structured to help you quickly understand the layering, how to run the project, and what is covered by tests today.
 
 ## Architecture
 
@@ -21,29 +21,33 @@ The architecture ensures separation of concerns, testability, and scalability.
 
 ### First Run Setup
 
-1. **SPM Dependencies**: On first launch, Xcode will download Swift Package Manager dependencies. Since TCA uses macros, you may see system popups requesting permission to enable them - please allow these requests.
+1. **RAWG API Registration**:
+   - Visit https://rawg.io/apidocs and create an account
+   - Generate an API key from your dashboard
+   
+2. **SPM Dependencies**: On first launch, Xcode will download Swift Package Manager dependencies. Since TCA uses macros, you may see system popups requesting permission to enable them - please allow these requests.
 
-2. **Configuration Files**: 
+3. **Configuration Files**: 
    - Navigate to `Core/Infrastructure/Configurations/Secrets/`
    - Copy `Development-Secrets.xcconfig.template` → `Development-Secrets.xcconfig`  
    - Copy `Production-Secrets.xcconfig.template` → `Production-Secrets.xcconfig` 
-   - Update both files with your actual API credentials:
+   - Update both files with your RAWG API credentials:
      ```
      API_KEY = your_actual_api_key
      API_BASE_URL = your_actual_base_url
      ```
    - Note: In a real project these files should be git-ignored; templates should be committed instead.
 
-3. **Build & Run**:
+4. **Build & Run**:
    - Open `ArtemPoluyanovichTechTask.xcodeproj`
    - Select `Debug-Dev` scheme for development
    - Build and run on iOS simulator
 
 ### Current Test Coverage
 The project already includes solid test coverage for:
-  - Data layer mappers (MainTypeModelMapperTests, ManufacturerModelMapperTests)
-  - TCA Features (CarTypesFeatureTests, ManufacturersFeatureTests)  
-  - Test helpers and mock repositories (TestDataHelpers, MockCarsRepository)
+  - Data layer mappers (GameModelMapperTests, GenreModelMapperTests)
+  - TCA Features (GamesFeatureTests, GenresFeatureTests)  
+  - Test helpers and mock repositories (TestDataHelpers, MockGamesRepository)
 
 ## Project Structure
 
@@ -59,6 +63,12 @@ Core/
 Presentation/
 ├── DesignSystem/                           # UI components & styling
 └── Features/                               # TCA features (State/Action/Reducer + View)
+
+ArtemPoluyanovichTechTaskTests/
+├── Data/Mappers/                           # Data mapper tests
+├── Features/                               # TCA feature tests  
+├── Helpers/                                # Test helpers
+└── Mocks/                                  # Mock implementations
 ```
 
 ### Architecture Flow
