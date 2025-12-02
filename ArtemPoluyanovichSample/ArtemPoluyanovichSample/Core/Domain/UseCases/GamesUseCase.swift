@@ -18,11 +18,3 @@ struct GamesUseCase {
         return try await repository.fetchGames(genreId: genreId, page: page, pageSize: 20)
     }
 }
-
-extension GamesUseCase {
-    static func create() -> GamesUseCase {
-        let restService = NetworkServiceFactory.createRestService()
-        let repository = GamesRepositoryImpl(restService: restService)
-        return GamesUseCase(repository: repository)
-    }
-}

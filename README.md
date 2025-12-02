@@ -39,7 +39,7 @@ The architecture ensures separation of concerns, testability, and scalability.
    - Note: In a real project these files should be git-ignored; templates should be committed instead.
 
 4. **Build & Run**:
-   - Open `ArtemPoluyanovichSample.xcodeproj`
+   - Open `ArtemPoluyanovichTechTask.xcodeproj`
    - Select `Debug-Dev` scheme for development
    - Build and run on iOS simulator
 
@@ -53,7 +53,7 @@ The project already includes solid test coverage for:
 
 ```
 App/
-└── ArtemPoluyanovichSampleApp.swift      # App entry point
+└── ArtemPoluyanovichTechTaskApp.swift      # App entry point
 
 Core/
 ├── Data/                                   # Data layer (DTOs, Repositories)
@@ -64,7 +64,7 @@ Presentation/
 ├── DesignSystem/                           # UI components & styling
 └── Features/                               # TCA features (State/Action/Reducer + View)
 
-ArtemPoluyanovichSampleTests/
+ArtemPoluyanovichTechTaskTests/
 ├── Data/Mappers/                           # Data mapper tests
 ├── Features/                               # TCA feature tests  
 ├── Helpers/                                # Test helpers
