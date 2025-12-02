@@ -2,12 +2,14 @@
 //  GenresFeatureTests.swift
 //  ArtemPoluyanovichTechTaskTests
 //
-//  Created by Artiom Poluyanovich on 16/11/2025.
+//  Created by Artiom Poluyanovich on 2/12/2025.
 //
 
 @testable import ArtemPoluyanovichTechTask
+import ComposableArchitecture
 import Testing
 
+@MainActor
 struct GenresFeatureTests {
     
     @Test("onAppear loads first page")
