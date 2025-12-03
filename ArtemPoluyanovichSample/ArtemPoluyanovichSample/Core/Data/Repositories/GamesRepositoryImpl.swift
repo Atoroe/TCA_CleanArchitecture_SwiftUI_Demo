@@ -37,10 +37,8 @@ final class GamesRepositoryImpl: GamesRepository {
                 totalPages: totalPages,
                 hasMorePages: response.hasMorePages
             )
-        } catch let error as NetworkError {
-            throw ErrorMapper.toAppError(error)
         } catch {
-            throw AppError.unknown(message: error.localizedDescription)
+            throw ErrorMapper.map(error)
         }
     }
     
@@ -66,10 +64,8 @@ final class GamesRepositoryImpl: GamesRepository {
                 totalPages: totalPages,
                 hasMorePages: response.hasMorePages
             )
-        } catch let error as NetworkError {
-            throw ErrorMapper.toAppError(error)
         } catch {
-            throw AppError.unknown(message: error.localizedDescription)
+            throw ErrorMapper.map(error)
         }
     }
 }

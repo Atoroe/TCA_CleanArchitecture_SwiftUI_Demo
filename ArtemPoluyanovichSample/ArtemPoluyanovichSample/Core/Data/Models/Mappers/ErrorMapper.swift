@@ -26,6 +26,16 @@ enum ErrorMapper {
         }
     }
     
+    static func map(_ error: Error) -> AppError {
+        if let networkError = error as? NetworkError {
+            return toAppError(networkError)
+        } else if let appError = error as? AppError {
+            return appError
+        } else {
+            return .unknown(message: error.localizedDescription)
+        }
+    }
+    
     // MARK: - Private Helpers
     
     private static func mapHttpError(statusCode: Int, data: Data?) -> AppError {
@@ -50,7 +60,7 @@ enum ErrorMapper {
         case .noData:
             return .network(reason: "No data received from server")
         default:
-            fatalError("Unexpected network error type in mapNetworkError")
+            return .unknown(message: "Unexpected network error type in mapNetworkError")
         }
     }
     
