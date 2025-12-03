@@ -73,8 +73,6 @@ struct GamesFeature {
                         await send(.gamesLoaded(result))
                     } catch is CancellationError {
                         return
-                    } catch let error as AppError {
-                        await send(.loadFailed(error.localizedDescription))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }

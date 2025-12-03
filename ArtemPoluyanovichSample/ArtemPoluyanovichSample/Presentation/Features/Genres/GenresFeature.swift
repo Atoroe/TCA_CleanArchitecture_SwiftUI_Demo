@@ -72,8 +72,6 @@ struct GenresFeature {
                         await send(.genresLoaded(result))
                     } catch is CancellationError {
                         return
-                    } catch let error as AppError {
-                        await send(.loadFailed(error.localizedDescription))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }
