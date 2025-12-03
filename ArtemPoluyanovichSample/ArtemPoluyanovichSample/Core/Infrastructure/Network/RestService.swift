@@ -29,13 +29,7 @@ final class RestService: RestServiceProtocol {
         self.configuration = configuration
         self.interceptors = interceptors
         
-        // Configure URLSession with timeout from configuration
-        let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.timeoutIntervalForRequest = configuration.timeout
-        sessionConfiguration.timeoutIntervalForResource = configuration.timeout
-        let session = URLSession(configuration: sessionConfiguration)
-        
-        self.sessionExecutor = sessionExecutor ?? SessionExecutor(session: session)
+        self.sessionExecutor = sessionExecutor ?? SessionExecutor(configuration: configuration)
     }
     
     // MARK: Public Methods

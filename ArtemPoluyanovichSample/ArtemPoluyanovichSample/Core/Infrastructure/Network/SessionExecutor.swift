@@ -16,8 +16,20 @@ protocol SessionExecutorProtocol {
 final class SessionExecutor: SessionExecutorProtocol {
     private let session: URLSession
     
-    init(session: URLSession) {
-        self.session = session
+    init(
+        session: URLSession? = nil,
+        configuration: NetworkConfiguration? = nil
+    ) {
+        if let session = session {
+            self.session = session
+        } else if let configuration = configuration {
+            let sessionConfiguration = URLSessionConfiguration.default
+            sessionConfiguration.timeoutIntervalForRequest = configuration.timeout
+            sessionConfiguration.timeoutIntervalForResource = configuration.timeout
+            self.session = URLSession(configuration: sessionConfiguration)
+        } else {
+            self.session = URLSession.shared
+        }
     }
     
     func execute(_ request: URLRequest) async throws -> (Data, URLResponse) {
