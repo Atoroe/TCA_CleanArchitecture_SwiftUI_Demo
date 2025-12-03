@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - LoggerInterceptor
-final class LoggerInterceptor: RequestInterceptorProtocol, ResponseInterceptorProtocol  {
+final class LoggerInterceptor: Interceptor {
     
     private let enabled: Bool
     private let maskApiKey: (String) -> String
@@ -23,8 +23,23 @@ final class LoggerInterceptor: RequestInterceptorProtocol, ResponseInterceptorPr
         }
     }
     
-    func interceptRequest(_ request: inout URLRequest) async throws {
-        guard enabled, let url = request.url else { return }
+    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+        guard enabled else { return try await chain.proceed(request) }
+        
+        logRequest(request)
+        
+        do {
+            let (data, response) = try await chain.proceed(request)
+            logResponse(response, data: data, error: nil)
+            return (data, response)
+        } catch {
+            logResponse(nil, data: nil, error: error)
+            throw error
+        }
+    }
+    
+    private func logRequest(_ request: URLRequest) {
+        guard let url = request.url else { return }
         
         var logMessage = "\n📤 [Network] Request:\n"
         logMessage += "   URL: \(url.absoluteString)\n"
@@ -50,11 +65,7 @@ final class LoggerInterceptor: RequestInterceptorProtocol, ResponseInterceptorPr
         print(logMessage)
     }
     
-    func interceptResponse(_ response: URLResponse?, data: Data?, error: Error?) async throws -> (Data?, Error?) {
-        guard enabled else {
-            return (data, error)
-        }
-        
+    private func logResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         var logMessage = "\n📥 [Network] Response:\n"
         
         if let httpResponse = response as? HTTPURLResponse {
@@ -87,8 +98,5 @@ final class LoggerInterceptor: RequestInterceptorProtocol, ResponseInterceptorPr
         }
         
         print(logMessage)
-        
-        // Return original values unchanged
-        return (data, error)
     }
 }

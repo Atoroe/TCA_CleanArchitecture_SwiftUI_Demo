@@ -9,7 +9,7 @@ final class NetworkServiceFactory {
     static func createRestService() -> RestServiceProtocol {
         let config = NetworkConfiguration.fromEnvironment()
         
-        let interceptors: [NetworkInterceptorProtocol] = [
+        let interceptors: [Interceptor] = [
             AuthInterceptor(apiKey: AppEnvironment.shared.apiKey),
             RetryInterceptor(maxRetries: config.maxRetryCount),
             ErrorHandlerInterceptor(),
