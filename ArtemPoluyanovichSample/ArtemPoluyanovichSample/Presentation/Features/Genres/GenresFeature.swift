@@ -10,11 +10,19 @@ import Foundation
 
 @Reducer
 struct GenresFeature {
+    // MARK: - LoadingState
+    enum LoadingState: Equatable {
+        case idle
+        case initialLoading
+        case loadingMore
+        case refreshing
+    }
+    
     @ObservableState
     struct State: Equatable {
         var genres: [Genre] = []
         var currentPage: Int = 0
-        var isLoading: Bool = false
+        var loadingState: LoadingState = .idle
         var hasMorePages: Bool = true
         var errorMessage: String?
         var showToast: Bool = false
@@ -23,7 +31,15 @@ struct GenresFeature {
         @Presents var destination: Destination.State?
 
         var isEmpty: Bool {
-            !isLoading && genres.isEmpty && errorMessage == nil
+            loadingState == .idle && genres.isEmpty && errorMessage == nil
+        }
+        
+        var isInitialLoading: Bool {
+            loadingState == .initialLoading && genres.isEmpty
+        }
+        
+        var isLoadingMore: Bool {
+            loadingState == .loadingMore
         }
 
         init() {}
@@ -31,6 +47,7 @@ struct GenresFeature {
 
     enum Action: Equatable {
         case onAppear
+        case refresh
         case loadNextPage
         case genresLoaded(PagedResult<Genre>)
         case loadFailed(String)
@@ -56,39 +73,39 @@ struct GenresFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.genres.isEmpty && !state.isLoading else { return .none }
-                return .run { send in
-                    await send(.loadNextPage)
-                }
+                guard state.genres.isEmpty, state.loadingState == .idle else { return .none }
+                state.loadingState = .initialLoading
+                return loadPage(state: &state, page: 0, isRefresh: false)
+
+            case .refresh:
+                guard state.loadingState != .refreshing else { return .none }
+                state.loadingState = .refreshing
+                state.currentPage = 0
+                state.hasMorePages = true
+                return loadPage(state: &state, page: 0, isRefresh: true)
 
             case .loadNextPage:
-                guard !state.isLoading && state.hasMorePages else { return .none }
-                state.isLoading = true
-                state.errorMessage = nil
-                let pageToLoad = state.currentPage
-                return .run { send in
-                    do {
-                        let result = try await useCase.fetchGenres(page: pageToLoad)
-                        await send(.genresLoaded(result))
-                    } catch is CancellationError {
-                        return
-                    } catch {
-                        await send(.loadFailed(error.localizedDescription))
-                    }
-                }
-                .cancellable(id: CancelID.loading, cancelInFlight: true)
+                guard state.loadingState == .idle, state.hasMorePages else { return .none }
+                state.loadingState = .loadingMore
+                return loadPage(state: &state, page: state.currentPage, isRefresh: false)
 
             case let .genresLoaded(result):
-                state.isLoading = false
-                let existingIds = Set(state.genres.map { $0.id })
-                let newItems = result.items.filter { !existingIds.contains($0.id) }
-                state.genres.append(contentsOf: newItems)
+                let wasRefreshing = state.loadingState == .refreshing
+                state.loadingState = .idle
+                
+                if wasRefreshing {
+                    state.genres = result.items
+                } else {
+                    let existingIds = Set(state.genres.map { $0.id })
+                    let newItems = result.items.filter { !existingIds.contains($0.id) }
+                    state.genres.append(contentsOf: newItems)
+                }
                 state.currentPage += 1
                 state.hasMorePages = result.hasMorePages
                 return .none
 
             case let .loadFailed(message):
-                state.isLoading = false
+                state.loadingState = .idle
                 state.errorMessage = message
                 state.showToast = true
                 return .run { send in
@@ -138,6 +155,22 @@ struct GenresFeature {
         .forEach(\.path, action: \.path) {
             GamesFeature()
         }
+    }
+    
+    // MARK: - Private Helpers
+    private func loadPage(state: inout State, page: Int, isRefresh: Bool) -> Effect<Action> {
+        state.errorMessage = nil
+        return .run { send in
+            do {
+                let result = try await useCase.fetchGenres(page: page)
+                await send(.genresLoaded(result))
+            } catch is CancellationError {
+                return
+            } catch {
+                await send(.loadFailed(error.localizedDescription))
+            }
+        }
+        .cancellable(id: CancelID.loading, cancelInFlight: isRefresh)
     }
 }
 

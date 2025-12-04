@@ -10,6 +10,7 @@ This project follows a clean architecture approach combining:
 - **TCA (The Composable Architecture)** for state management
 - **Clean Swift** principles for layer separation  
 - **SwiftUI** for declarative UI development
+- **SwiftTesting** for tests
 
 The architecture ensures separation of concerns, testability, and scalability.
 
@@ -137,7 +138,7 @@ SwiftUI View → Sends Action → TCA Reducer
 
 ### Network Layer
 
-The network layer implements the **Chain of Responsibility** pattern , providing a flexible and extensible architecture for handling HTTP requests and responses.
+The network layer implements the **Chain of Responsibility** pattern, providing a flexible and extensible architecture for handling HTTP requests and responses.
 
 #### Pattern Overview
 
