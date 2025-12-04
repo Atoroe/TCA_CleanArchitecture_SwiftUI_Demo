@@ -101,3 +101,15 @@ extension GamesView {
         )
     }
 }
+
+// MARK: Preview
+#Preview {
+    GamesView(
+        store: Store(
+            initialState: GamesFeature.State(
+                genre: Genre(id: "1", name: "Action")
+            ),
+            reducer: { GamesFeature() }
+        )
+    )
+}
