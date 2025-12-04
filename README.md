@@ -48,6 +48,7 @@ The project already includes solid test coverage for:
   - Data layer mappers (GameModelMapperTests, GenreModelMapperTests)
   - TCA Features (GamesFeatureTests, GenresFeatureTests)  
   - Test helpers and mock repositories (TestDataHelpers, MockGamesRepository)
+  - Network layer (DefaultInterceptorChainTests, SessionExecutorTests, AuthInterceptorTests, RetryInterceptorTests, URLProtocolMock)
 
 ## Project Structure
 
@@ -68,6 +69,7 @@ ArtemPoluyanovichTechTaskTests/
 ├── Data/Mappers/                           # Data mapper tests
 ├── Features/                               # TCA feature tests  
 ├── Helpers/                                # Test helpers
+├── Infrastructure/Network/                 # Network layer tests
 └── Mocks/                                  # Mock implementations
 ```
 
@@ -132,6 +134,73 @@ SwiftUI View → Sends Action → TCA Reducer
 - **Infrastructure Layer**:
   - Network: API clients and networking logic
   - Configuration: Build settings and environment configs
+
+### Network Layer
+
+The network layer implements the **Chain of Responsibility** pattern (similar to OkHttp), providing a flexible and extensible architecture for handling HTTP requests and responses.
+
+#### Pattern Overview
+
+The Chain of Responsibility pattern allows multiple interceptors to process requests sequentially. Each interceptor can:
+- Modify the request before it's sent
+- Handle errors and retries
+- Transform responses
+- Log network activity
+
+#### Architecture Components
+
+- **RestService**: Entry point that coordinates the interceptor chain
+- **DefaultInterceptorChain**: Stateless chain manager that routes requests through interceptors
+- **SessionExecutor**: Executes the final HTTP request via URLSession and validates HTTP status codes
+- **Interceptors**: Modular components that process requests/responses
+
+#### Request Flow
+
+```
+RestService
+    ↓
+DefaultInterceptorChain
+    ↓
+AuthInterceptor (adds API key)
+    ↓
+RetryInterceptor (handles retries)
+    ↓
+ErrorHandlerInterceptor (transforms errors)
+    ↓
+LoggerInterceptor (logs request/response)
+    ↓
+SessionExecutor (executes HTTP request)
+    ↓
+URLSession (network call)
+```
+
+#### Interceptors
+
+1. **AuthInterceptor**
+   - Purpose: Adds API key to request query parameters
+   - Position: First in chain (modifies request before other processing)
+
+2. **RetryInterceptor**
+   - Purpose: Automatically retries failed requests
+   - Retry conditions: Network timeouts, connection errors, 5xx server errors
+   - Configuration: Max retries and delay between attempts
+
+3. **ErrorHandlerInterceptor**
+   - Purpose: Transforms low-level errors into domain-specific NetworkError types
+   - Handles: URLError → NetworkError mapping, HTTP status code interpretation
+
+4. **LoggerInterceptor**
+   - Purpose: Logs request/response details for debugging
+   - Features: Masks sensitive data (API keys), logs headers, body preview
+   - Configuration: Can be enabled/disabled via NetworkConfiguration
+
+#### Benefits
+
+- **Separation of Concerns**: Each interceptor has a single responsibility
+- **Testability**: Interceptors can be tested independently
+- **Extensibility**: New interceptors can be added without modifying existing code
+- **Stateless Design**: Chain and interceptors are stateless, making them thread-safe
+- **Professional Architecture**: Industry-standard pattern used in libraries like OkHttp and Alamofire
 
 ###  SwiftLint
 SwiftLint is included to enforce code style.

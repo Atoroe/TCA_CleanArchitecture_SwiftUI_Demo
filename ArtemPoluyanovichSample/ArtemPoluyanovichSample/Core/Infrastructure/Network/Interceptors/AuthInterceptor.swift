@@ -8,18 +8,20 @@
 import Foundation
 
 // MARK: - AuthInterceptor
-final class AuthInterceptor: RequestInterceptorProtocol {
+final class AuthInterceptor: Interceptor {
     
     private let apiKey: String
     private let queryParameterName: String
     
-    init(apiKey: String, queryParameterName: String = "key") {
+    nonisolated init(apiKey: String, queryParameterName: String = "key") {
         self.apiKey = apiKey
         self.queryParameterName = queryParameterName
     }
     
-    func interceptRequest(_ request: inout URLRequest) async throws {
-        guard let url = request.url,
+    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+        var modifiedRequest = request
+        
+        guard let url = modifiedRequest.url,
               var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw NetworkError.invalidURL("Failed to parse URL for authentication")
         }
@@ -32,7 +34,9 @@ final class AuthInterceptor: RequestInterceptorProtocol {
             guard let updatedURL = urlComponents.url else {
                 throw NetworkError.invalidURL("Failed to create URL with API key")
             }
-            request.url = updatedURL
+            modifiedRequest.url = updatedURL
         }
+        
+        return try await chain.proceed(modifiedRequest)
     }
 }

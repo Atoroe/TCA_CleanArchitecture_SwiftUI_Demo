@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol NetworkInterceptorProtocol {}
-
-protocol RequestInterceptorProtocol: NetworkInterceptorProtocol {
-    func interceptRequest(_ request: inout URLRequest) async throws
+// MARK: - Interceptor
+protocol Interceptor: Sendable {
+    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse)
 }
 
-protocol ResponseInterceptorProtocol: NetworkInterceptorProtocol {
-    func interceptResponse(_ response: URLResponse?, data: Data?, error: Error?) async throws -> (Data?, Error?)
+// MARK: - InterceptorChain
+protocol InterceptorChain: Sendable {
+    func proceed(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
