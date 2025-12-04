@@ -12,4 +12,4 @@
 
 // Environment-specific variables
 ENVIRONMENT = prod
-APP_DISPLAY_NAME = TestTask
+APP_DISPLAY_NAME = RAWG

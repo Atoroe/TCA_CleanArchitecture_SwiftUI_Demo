@@ -8,10 +8,10 @@
 @testable import ArtemPoluyanovichSample
 import Foundation
 import Testing
+import Clocks
 
 @Suite("RetryInterceptor Tests")
 struct RetryInterceptorTests {
-    
     
     @Test("successful request without retry")
     func successfulRequestWithoutRetry() async throws {

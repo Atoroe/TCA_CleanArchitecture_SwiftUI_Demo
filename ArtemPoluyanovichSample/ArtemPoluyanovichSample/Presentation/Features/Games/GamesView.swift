@@ -30,7 +30,9 @@ struct GamesView: View {
     
     @ViewBuilder
     private var contentView: some View {
-        if store.isEmpty {
+        if store.isInitialLoading {
+            LoadingView(style: .fullScreen)
+        } else if store.isEmpty {
             EmptyStateView(
                 title: String(localized: Localization.emptyTitle),
                 message: String(localized: Localization.emptyMessage)
@@ -50,11 +52,20 @@ struct GamesView: View {
                 rowView(index: index, game: game)
             }
 
-            if store.isLoading {
-                LoadingView(style: .inline)
+            if store.hasMorePages {
+                PaginationFooter(
+                    isLoading: store.isLoadingMore,
+                    onLoadMore: { store.send(.loadNextPage) }
+                )
             }
         }
         .listStyle(.plain)
+        .refreshable {
+            store.send(.refresh)
+            while store.loadingState == .refreshing {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+            }
+        }
     }
     
     private func rowView(index: Int, game: Game) -> some View {
@@ -74,12 +85,6 @@ struct GamesView: View {
         .listRowBackground(backgroundColor)
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
-        .onAppear {
-            let threshold = max(3, store.games.count / 10)
-            if index >= store.games.count - threshold && store.hasMorePages && !store.isLoading {
-                store.send(.loadNextPage)
-            }
-        }
     }
     
 }
