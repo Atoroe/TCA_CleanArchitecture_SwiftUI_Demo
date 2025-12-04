@@ -13,6 +13,16 @@ extension GamesUseCase: DependencyKey {
         @Dependency(\.gamesRepository) var repository
         return GamesUseCase(repository: repository)
     }
+    
+    static var testValue: GamesUseCase {
+        @Dependency(\.gamesRepository) var repository
+        return GamesUseCase(repository: repository)
+    }
+    
+    static var previewValue: GamesUseCase {
+        @Dependency(\.gamesRepository) var repository
+        return GamesUseCase(repository: repository)
+    }
 }
 
 extension DependencyValues {

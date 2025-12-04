@@ -24,3 +24,13 @@ struct AppView: View {
         .animation(.easeInOut(duration: 0.3), value: store.currentRootScreen)
     }
 }
+
+// MARK: Preview
+#Preview {
+    AppView(
+        store: Store(
+            initialState: AppFeature.State(),
+            reducer: { AppFeature() }
+        )
+    )
+}

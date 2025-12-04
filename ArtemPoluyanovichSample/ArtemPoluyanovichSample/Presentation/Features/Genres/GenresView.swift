@@ -108,3 +108,13 @@ extension GenresView {
         static let loading = LocalizedStringResource("common.loading", defaultValue: "Loading…")
     }
 }
+
+// MARK: Preview
+#Preview {
+    GenresView(
+        store: Store(
+            initialState: GenresFeature.State(),
+            reducer: { GenresFeature() }
+        )
+    )
+}

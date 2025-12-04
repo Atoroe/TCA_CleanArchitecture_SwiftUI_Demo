@@ -137,7 +137,7 @@ SwiftUI View → Sends Action → TCA Reducer
 
 ### Network Layer
 
-The network layer implements the **Chain of Responsibility** pattern (similar to OkHttp), providing a flexible and extensible architecture for handling HTTP requests and responses.
+The network layer implements the **Chain of Responsibility** pattern , providing a flexible and extensible architecture for handling HTTP requests and responses.
 
 #### Pattern Overview
 
