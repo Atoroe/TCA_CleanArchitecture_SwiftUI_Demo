@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - SessionExecutorProtocol
-protocol SessionExecutorProtocol {
+protocol SessionExecutorProtocol: Sendable {
     func execute(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
 
@@ -16,7 +16,7 @@ protocol SessionExecutorProtocol {
 final class SessionExecutor: SessionExecutorProtocol {
     private let session: URLSession
     
-    init(
+    nonisolated init(
         session: URLSession? = nil,
         configuration: NetworkConfiguration? = nil
     ) {
@@ -46,4 +46,3 @@ final class SessionExecutor: SessionExecutorProtocol {
         return (data, response)
     }
 }
-

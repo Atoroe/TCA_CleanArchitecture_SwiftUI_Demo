@@ -13,7 +13,7 @@ final class AuthInterceptor: Interceptor {
     private let apiKey: String
     private let queryParameterName: String
     
-    init(apiKey: String, queryParameterName: String = "key") {
+    nonisolated init(apiKey: String, queryParameterName: String = "key") {
         self.apiKey = apiKey
         self.queryParameterName = queryParameterName
     }

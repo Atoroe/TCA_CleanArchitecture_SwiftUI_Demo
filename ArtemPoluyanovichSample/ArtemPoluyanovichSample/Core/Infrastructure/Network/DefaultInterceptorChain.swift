@@ -8,12 +8,12 @@
 import Foundation
 
 // MARK: - DefaultInterceptorChain
-final class DefaultInterceptorChain: InterceptorChain {
+final class DefaultInterceptorChain: InterceptorChain, @unchecked Sendable {
     private let interceptors: [Interceptor]
     private let index: Int
     private let sessionExecutor: SessionExecutorProtocol
     
-    init(
+    nonisolated init(
         interceptors: [Interceptor],
         index: Int,
         sessionExecutor: SessionExecutorProtocol
@@ -36,4 +36,3 @@ final class DefaultInterceptorChain: InterceptorChain {
         }
     }
 }
-

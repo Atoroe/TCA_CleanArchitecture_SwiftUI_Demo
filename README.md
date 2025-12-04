@@ -48,6 +48,7 @@ The project already includes solid test coverage for:
   - Data layer mappers (GameModelMapperTests, GenreModelMapperTests)
   - TCA Features (GamesFeatureTests, GenresFeatureTests)  
   - Test helpers and mock repositories (TestDataHelpers, MockGamesRepository)
+  - Network layer (DefaultInterceptorChainTests, SessionExecutorTests, AuthInterceptorTests, RetryInterceptorTests, URLProtocolMock)
 
 ## Project Structure
 
@@ -68,6 +69,7 @@ ArtemPoluyanovichTechTaskTests/
 ├── Data/Mappers/                           # Data mapper tests
 ├── Features/                               # TCA feature tests  
 ├── Helpers/                                # Test helpers
+├── Infrastructure/Network/                 # Network layer tests
 └── Mocks/                                  # Mock implementations
 ```
 

@@ -5,18 +5,29 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
+import ComposableArchitecture
 import Foundation
+
+// MARK: - Clock Import
+// Explicit import for Clock protocol from Swift Concurrency
+// This ensures Clock and ContinuousClock are properly resolved
 
 // MARK: - RetryInterceptor
 final class RetryInterceptor: Interceptor {
     // MARK: properties
     private let maxRetries: Int
     private let retryDelay: TimeInterval
+    private let clock: any Clock<Duration>
     
     // MARK: Initializer
-    init(maxRetries: Int = 3, retryDelay: TimeInterval = 5.0) {
+    nonisolated init(
+        maxRetries: Int = 3,
+        retryDelay: TimeInterval = 5.0,
+        clock: any Clock<Duration> = ContinuousClock() as any Clock<Duration>
+    ) {
         self.maxRetries = maxRetries
         self.retryDelay = retryDelay
+        self.clock = clock
     }
     
     // MARK: Public Methods
@@ -27,7 +38,7 @@ final class RetryInterceptor: Interceptor {
         for attempt in 0...maxRetries {
             do {
                 if attempt > 0 {
-                    try await Task.sleep(nanoseconds: UInt64(retryDelay * 1_000_000_000))
+                    try await clock.sleep(for: .seconds(retryDelay))
                 }
                 return try await chain.proceed(request)
             } catch {

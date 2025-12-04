@@ -8,11 +8,11 @@
 import Foundation
 
 // MARK: - Interceptor
-protocol Interceptor {
+protocol Interceptor: Sendable {
     func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse)
 }
 
 // MARK: - InterceptorChain
-protocol InterceptorChain {
+protocol InterceptorChain: Sendable {
     func proceed(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
