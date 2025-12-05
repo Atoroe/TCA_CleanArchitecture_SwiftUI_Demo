@@ -10,7 +10,7 @@ This project follows a clean architecture approach combining:
 - **TCA (The Composable Architecture)** for state management
 - **Clean Swift** principles for layer separation  
 - **SwiftUI** for declarative UI development
-- **SwiftTesting** for tests
+- **Swift Testing** for tests
 
 The architecture ensures separation of concerns, testability, and scalability.
 
@@ -101,6 +101,58 @@ SwiftUI View → Sends Action → TCA Reducer
        ↑                          ↓  
        ←── Returns Effect ────────→ Domain Layer
 ```
+
+#### Design System Layer
+
+The Design System provides a centralized, consistent UI foundation through tokens, components, and styling utilities.
+
+```
+Colors/
+├── Palette.swift                    # Base color tokens from Assets
+└── Color+Semantic.swift             # Semantic color system
+    ├── Background (primary, secondary, tertiary, Gradient)
+    ├── Surface (card, elevated, overlay)
+    ├── Text (primary, secondary, tertiary, disabled, onColor)
+    ├── Interactive (neutral, primary/secondary/tertiary + states)
+    ├── Border (primary, secondary, focus, error)
+    ├── Status (success, warning, error, info + backgrounds)
+    └── Special (shadow, divider, shimmer)
+
+Typography/
+├── AppFont.swift                    # Inter Variable Fonts management
+│   └── Font weights & sizes (display, heading, body, caption)
+├── TestStyle.swift                  # Complete text styles (font + color + spacing + kerning)
+└── Text+Extensions.swift            # Convenience modifiers for views (.heading1(), .body(), etc.)
+
+Components/
+├── EmptyStateView.swift             # Empty state placeholder
+├── ListCell.swift                   # Reusable list cell container
+├── LoadingView.swift                 # Loading indicator
+├── PaginationFooter.swift           # Pagination loading footer
+└── ToastView.swift                  # Toast notification component
+
+Layout/
+├── SpacingToken.swift               # Spacing scale (xxs, xs, sm, md, xl)
+├── CornerRadiusToken.swift          # Border radius tokens
+└── ShadowToken.swift                # Shadow elevation tokens
+
+Animation/
+├── AnimationToken.swift             # Animation duration & spring configs
+└── TransitionToken.swift            # View transition tokens
+
+Modifiers/
+├── NavigationStyling.swift          # Navigation bar styling
+└── ToastModifier.swift              # Toast presentation modifier
+
+Assets/
+└── Image+SF.swift                   # SF Symbols extensions
+```
+
+**Usage Flow:**
+- **Colors**: Use semantic colors (`Color.Text.primary`, `Color.Background.primary`) instead of raw palette values
+- **Typography**: In views, use `Text+Extensions` methods (`.heading1()`, `.body()`) for complete styling
+- **Components**: Reusable UI building blocks with consistent styling
+- **Tokens**: Layout and animation tokens ensure consistent spacing and motion
 
 #### Detailed Data Flow
 

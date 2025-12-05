@@ -19,7 +19,7 @@ struct ToastView: View {
                     
                     VStack(spacing: 0) {
                         RoundedRectangle(cornerRadius: CornerRadiusToken.toastIndicator)
-                            .fill(Color.white.opacity(0.4))
+                            .fill(Color.Text.onColor.opacity(0.4))
                             .frame(width: 36, height: 5)
                             .padding(.top, SpacingToken.xxs)
                         
@@ -27,16 +27,15 @@ struct ToastView: View {
                             HStack(spacing: SpacingToken.xxs) {
                                 Image.SFSymbol.circleExclamationmark
                                     .font(.system(size: 20, weight: .medium))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color.Text.onColor)
                                 
                                 Text(Localization.error)
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color.Text.onColor)
                             }
                             
                             Text(message)
-                                .font(.designSystemBody)
-                                .foregroundColor(.white.opacity(0.9))
+                                .textStyle(.body.withColor(Color.Text.onColor.opacity(0.9)))
                                 .multilineTextAlignment(.leading)
                         }
                         .padding(.horizontal, SpacingToken.sm)
@@ -44,7 +43,7 @@ struct ToastView: View {
                         .padding(.bottom, SpacingToken.md + geometry.safeAreaInsets.bottom)
                     }
                     .frame(maxWidth: .infinity)
-                    .background(Palette.errorToastBackground)
+                    .background(Color.Status.errorBackground)
                     .clipShape(
                         UnevenRoundedRectangle(
                             topLeadingRadius: CornerRadiusToken.toast,

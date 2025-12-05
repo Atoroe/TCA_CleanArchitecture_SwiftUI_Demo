@@ -15,16 +15,14 @@ struct EmptyStateView: View {
         VStack(spacing: SpacingToken.sm) {
             Image.SFSymbol.car
                 .font(.system(size: 64, weight: .light))
-                .foregroundColor(.secondary)
+                .foregroundColor(Color.Text.secondary)
             
             Text(title)
-                .font(.designSystemTitle3)
-                .foregroundColor(.primary)
+                .textStyle(.heading3)
                 .multilineTextAlignment(.center)
             
             Text(message)
-                .font(.designSystemBody)
-                .foregroundColor(.secondary)
+                .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, SpacingToken.xl)
         }
