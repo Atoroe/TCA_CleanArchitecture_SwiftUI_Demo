@@ -69,7 +69,7 @@ struct GamesView: View {
     }
     
     private func rowView(index: Int, game: Game) -> some View {
-        let backgroundColor = index % 2 == 0 ? Palette.cellWhite : Palette.cellAlternate
+        let backgroundColor = index % 2 == 0 ? Color.Surface.card : Color.Background.secondary
         
         return Button {
             store.send(.selectGame(game))
@@ -79,7 +79,7 @@ struct GamesView: View {
                 showChevron: false
             ) {
                 Text(game.name)
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color.Text.primary)
             }
         }
         .listRowBackground(backgroundColor)

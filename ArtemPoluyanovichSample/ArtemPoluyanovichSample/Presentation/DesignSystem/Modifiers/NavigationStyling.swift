@@ -14,7 +14,7 @@ struct StandardNavigationStyling: ViewModifier {
         content
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Palette.navigationBackground, for: .navigationBar)
+            .toolbarBackground(Color.Background.secondary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
     }
 }

@@ -18,7 +18,7 @@ extension Image {
 // MARK: - View Extension
 
 extension View {
-    func iconStyle(size: CGFloat = 24, color: Color = .primary) -> some View {
+    func iconStyle(size: CGFloat = 24, color: Color = Color.Text.primary) -> some View {
         self
             .font(.system(size: size))
             .foregroundColor(color)

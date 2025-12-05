@@ -73,7 +73,7 @@ struct GenresView: View {
     }
     
     private func rowView(index: Int, genre: Genre) -> some View {
-        let backgroundColor = index % 2 == 0 ? Palette.cellWhite : Palette.cellAlternate
+        let backgroundColor = index % 2 == 0 ? Color.Surface.card : Color.Background.secondary
         
         return Button {
             store.send(.selectGenre(genre))
@@ -83,7 +83,7 @@ struct GenresView: View {
                 showChevron: true
             ) {
                 Text(genre.name)
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color.Text.primary)
             }
         }
         .listRowBackground(backgroundColor)
