@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - NetworkConfiguration
-struct NetworkConfiguration {
+struct NetworkConfiguration: Sendable {
     // MARK: Properies
     let baseURL: String
     let timeout: TimeInterval
@@ -17,7 +17,7 @@ struct NetworkConfiguration {
     let defaultHeaders: [String: String]
     
     // MARK: Initializer
-    init(
+    nonisolated init(
         baseURL: String,
         timeout: TimeInterval = 5,
         maxRetryCount: Int = 3,
@@ -34,7 +34,7 @@ struct NetworkConfiguration {
 
 // MARK: - Convenience Initializers
 extension NetworkConfiguration {
-    public static func fromEnvironment() -> NetworkConfiguration {
+    nonisolated public static func fromEnvironment() -> NetworkConfiguration {
         let environment = AppEnvironment.shared
         let isDevelopment = environment.environment.isDevelopment
         

@@ -8,19 +8,21 @@
 import Foundation
 
 // MARK: - LoggerInterceptor
-final class LoggerInterceptor: Interceptor {
+final class LoggerInterceptor: Interceptor, @unchecked Sendable {
     
     private let enabled: Bool
-    private let maskApiKey: (String) -> String
     
-    init(enabled: Bool = true) {
+    nonisolated init(enabled: Bool = true) {
         self.enabled = enabled
-        self.maskApiKey = { key in
-            guard key.count > 8 else { return "****" }
-            let prefix = String(key.prefix(4))
-            let suffix = String(key.suffix(4))
-            return "\(prefix)****\(suffix)"
-        }
+    }
+    
+    // MARK: - Private Helpers
+    
+    private static func maskApiKey(_ key: String) -> String {
+        guard key.count > 8 else { return "****" }
+        let prefix = String(key.prefix(4))
+        let suffix = String(key.suffix(4))
+        return "\(prefix)****\(suffix)"
     }
     
     func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
@@ -50,7 +52,7 @@ final class LoggerInterceptor: Interceptor {
             logMessage += "   Headers:\n"
             for (key, value) in headers.sorted(by: { $0.key < $1.key }) {
                 let maskedValue = (key.lowercased().contains("api") || key.lowercased().contains("authorization"))
-                    ? maskApiKey(value)
+                    ? Self.maskApiKey(value)
                     : value
                 logMessage += "      \(key): \(maskedValue)\n"
             }

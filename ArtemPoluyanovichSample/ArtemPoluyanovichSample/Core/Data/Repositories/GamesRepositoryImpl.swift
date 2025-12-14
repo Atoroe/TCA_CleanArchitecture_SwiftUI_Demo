@@ -8,22 +8,23 @@
 import Foundation
 
 // MARK: - GamesRepositoryImpl
-final class GamesRepositoryImpl: GamesRepository {
+struct GamesRepositoryImpl: GamesRepository, Sendable {
     private let restService: RestServiceProtocol
     
     init(restService: RestServiceProtocol) {
         self.restService = restService
     }
-
+    
+    // MARK: - Fetch Genres
     func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
         let request = ApiRequest(
-            path: GamesRepositoryUrlPaths.genres,
+            path: UrlPaths.genres,
             queryParameters: [
                 "page": String(page + 1), // RAWG uses 1-based indexing
                 "page_size": String(pageSize),
                 "ordering": "name" // Sorted by genres name
             ],
-            method: .GET,
+            method: .GET
         )
         
         do {
@@ -42,15 +43,16 @@ final class GamesRepositoryImpl: GamesRepository {
         }
     }
     
+    // MARK: - Fetch Games
     func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
         let request = ApiRequest(
-            path: GamesRepositoryUrlPaths.games,
+            path: UrlPaths.games,
             queryParameters: [
                 "genres": genreId,
                 "page": String(page + 1), // RAWG uses 1-based indexing
                 "page_size": String(pageSize)
             ],
-            method: .GET,
+            method: .GET
         )
         
         do {
@@ -70,8 +72,10 @@ final class GamesRepositoryImpl: GamesRepository {
     }
 }
 
-// MARK: - GamesRepositoryUrlPaths
-enum GamesRepositoryUrlPaths {
-    static let genres: String = "/genres"
-    static let games: String = "/games"
+// MARK: - URL Paths
+private extension GamesRepositoryImpl {
+    enum UrlPaths {
+        static let genres = "/genres"
+        static let games = "/games"
+    }
 }

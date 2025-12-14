@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - AuthInterceptor
-final class AuthInterceptor: Interceptor {
+final class AuthInterceptor: Interceptor, @unchecked Sendable {
     
     private let apiKey: String
     private let queryParameterName: String

@@ -15,7 +15,8 @@ struct RetryInterceptorTests {
     
     @Test("successful request without retry")
     func successfulRequestWithoutRetry() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 3)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 3, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         let chain = MockInterceptorChain.success()
         
@@ -26,13 +27,14 @@ struct RetryInterceptorTests {
     
     @Test("retries on timeout error")
     func retriesOnTimeoutError() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 2)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 2, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
-        var callCount = 0
+        let counter = CallCounter()
         let chain = MockInterceptorChain.custom { _ in
-            callCount += 1
-            if callCount == 1 {
+            let count = await counter.increment()
+            if count == 1 {
                 throw NetworkError.timeout
             }
             return (Data(), HTTPURLResponse())
@@ -40,18 +42,20 @@ struct RetryInterceptorTests {
         
         let (_, _) = try await interceptor.intercept(request, chain: chain)
         
-        #expect(callCount == 2)
+        let finalCount = await counter.count
+        #expect(finalCount == 2)
     }
     
     @Test("retries on 5xx error")
     func retriesOn5xxError() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 2)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 2, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
-        var callCount = 0
+        let counter = CallCounter()
         let chain = MockInterceptorChain.custom { _ in
-            callCount += 1
-            if callCount == 1 {
+            let count = await counter.increment()
+            if count == 1 {
                 throw NetworkError.httpError(statusCode: 500, data: nil)
             }
             return (Data(), HTTPURLResponse())
@@ -59,12 +63,14 @@ struct RetryInterceptorTests {
         
         let (_, _) = try await interceptor.intercept(request, chain: chain)
         
-        #expect(callCount == 2)
+        let finalCount = await counter.count
+        #expect(finalCount == 2)
     }
     
     @Test("does not retry on 4xx error")
     func doesNotRetryOn4xxError() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 3)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 3, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
         let chain = MockInterceptorChain.failure(NetworkError.unauthorized)
@@ -78,13 +84,14 @@ struct RetryInterceptorTests {
     
     @Test("retries on URLError connection issues")
     func retriesOnURLErrorConnectionIssues() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 2)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 2, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
-        var callCount = 0
+        let counter = CallCounter()
         let chain = MockInterceptorChain.custom { _ in
-            callCount += 1
-            if callCount == 1 {
+            let count = await counter.increment()
+            if count == 1 {
                 throw URLError(.notConnectedToInternet)
             }
             return (Data(), HTTPURLResponse())
@@ -92,13 +99,15 @@ struct RetryInterceptorTests {
         
         let (_, _) = try await interceptor.intercept(request, chain: chain)
         
-        #expect(callCount == 2)
+        let finalCount = await counter.count
+        #expect(finalCount == 2)
     }
     
     @Test("respects max retries limit")
     func respectsMaxRetriesLimit() async throws {
+        let mockClock = MockClock()
         let maxRetries = 2
-        let interceptor = RetryInterceptor(maxRetries: maxRetries)
+        let interceptor = RetryInterceptor(maxRetries: maxRetries, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
         let chain = MockInterceptorChain.failure(NetworkError.timeout)
@@ -118,10 +127,10 @@ struct RetryInterceptorTests {
         let interceptor = RetryInterceptor(maxRetries: 2, retryDelay: retryDelay, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
-        var callTimes: [Date] = []
+        let counter = CallCounter()
         let chain = MockInterceptorChain.custom { _ in
-            callTimes.append(Date())
-            if callTimes.count < 3 {
+            let count = await counter.increment()
+            if count < 3 {
                 throw NetworkError.timeout
             }
             return (Data(), HTTPURLResponse())
@@ -143,7 +152,8 @@ struct RetryInterceptorTests {
     
     @Test("does not retry on forbidden error")
     func doesNotRetryOnForbiddenError() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 3)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 3, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
         let chain = MockInterceptorChain.failure(NetworkError.forbidden)
@@ -157,7 +167,8 @@ struct RetryInterceptorTests {
     
     @Test("does not retry on not found error")
     func doesNotRetryOnNotFoundError() async throws {
-        let interceptor = RetryInterceptor(maxRetries: 3)
+        let mockClock = MockClock()
+        let interceptor = RetryInterceptor(maxRetries: 3, clock: mockClock.clock())
         let request = URLRequest(url: URL(string: "https://api.example.com/games")!)
         
         let chain = MockInterceptorChain.failure(NetworkError.notFound)
@@ -167,5 +178,16 @@ struct RetryInterceptorTests {
         }
         
         #expect(chain.proceedCallCount == 1)
+    }
+}
+
+// MARK: - Helpers
+
+private actor CallCounter {
+    var count = 0
+    
+    func increment() -> Int {
+        count += 1
+        return count
     }
 }

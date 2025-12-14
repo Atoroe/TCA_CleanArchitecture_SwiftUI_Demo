@@ -162,7 +162,7 @@ struct GenresFeature {
         state.errorMessage = nil
         return .run { send in
             do {
-                let result = try await useCase.fetchGenres(page: page)
+                let result = try await useCase.fetchGenres(page, 20)
                 await send(.genresLoaded(result))
             } catch is CancellationError {
                 return
