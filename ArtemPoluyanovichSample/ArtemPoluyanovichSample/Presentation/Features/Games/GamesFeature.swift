@@ -11,7 +11,7 @@ import Foundation
 @Reducer
 struct GamesFeature {
     // MARK: - LoadingState
-    enum LoadingState: Equatable {
+    enum LoadingState: Equatable, Hashable {
         case idle
         case initialLoading
         case loadingMore
@@ -132,7 +132,7 @@ struct GamesFeature {
         let genreId = state.genre.id
         return .run { send in
             do {
-                let result = try await useCase.fetchGames(genreId: genreId, page: page)
+                let result = try await useCase.fetchGames(genreId, page, 20)
                 await send(.gamesLoaded(result))
             } catch is CancellationError {
                 return

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PagedResult<T: Equatable>: Equatable {
+nonisolated struct PagedResult<T: Equatable & Sendable>: Equatable, Sendable {
     let items: [T]
     let currentPage: Int
     let totalPages: Int

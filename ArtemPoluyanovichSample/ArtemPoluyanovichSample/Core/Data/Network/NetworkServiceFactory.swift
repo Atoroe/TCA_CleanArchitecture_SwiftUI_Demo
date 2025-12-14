@@ -5,8 +5,11 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
-final class NetworkServiceFactory {
-    static func createRestService() -> RestServiceProtocol {
+// Note: @unchecked Sendable is safe here because:
+// - Only static methods, no instance state
+// - All dependencies are Sendable
+final class NetworkServiceFactory: @unchecked Sendable {
+    nonisolated static func createRestService() -> RestServiceProtocol {
         let config = NetworkConfiguration.fromEnvironment()
         
         let interceptors: [Interceptor] = [

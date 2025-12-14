@@ -13,7 +13,11 @@ protocol SessionExecutorProtocol: Sendable {
 }
 
 // MARK: - SessionExecutor
-final class SessionExecutor: SessionExecutorProtocol {
+// Note: @unchecked Sendable is safe here because:
+// - URLSession is Sendable in Swift 6
+// - Session is immutable after initialization
+// - No mutable state is shared across isolation domains
+final class SessionExecutor: SessionExecutorProtocol, @unchecked Sendable {
     private let session: URLSession
     
     nonisolated init(

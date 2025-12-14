@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - ErrorHandlerInterceptor
-final class ErrorHandlerInterceptor: Interceptor {
+final class ErrorHandlerInterceptor: Interceptor, @unchecked Sendable {
     
     // MARK: - Public Methods
     

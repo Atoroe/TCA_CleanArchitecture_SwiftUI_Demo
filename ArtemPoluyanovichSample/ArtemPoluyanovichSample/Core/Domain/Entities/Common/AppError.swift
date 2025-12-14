@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AppError: Error, LocalizedError, Equatable {
+enum AppError: Error, LocalizedError, Equatable, Sendable {
     case api(code: Int, message: String?)
     case network(reason: String)
     case unknown(message: String)

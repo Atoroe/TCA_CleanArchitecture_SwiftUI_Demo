@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - NetworkError
-enum NetworkError: Error, LocalizedError, Equatable {
+enum NetworkError: Error, LocalizedError, Equatable, Sendable {
     case httpError(statusCode: Int, data: Data?)
     case unauthorized
     case forbidden

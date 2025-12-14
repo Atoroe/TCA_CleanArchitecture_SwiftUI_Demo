@@ -46,7 +46,7 @@ struct ApiRequest: ApiRequestProtocol {
 }
 
 // MARK: - RequestMethod
-enum RequestMethod: String {
+enum RequestMethod: String, Sendable {
     case GET
     case POST
 }
