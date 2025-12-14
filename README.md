@@ -11,6 +11,9 @@ This project follows a clean architecture approach combining:
 - **Clean Swift** principles for layer separation  
 - **SwiftUI** for declarative UI development
 - **Swift Testing** for tests
+- **Swift 6.2** with upcoming features (`InferIsolatedConformances`, `NonisolatedNonsendingByDefault`)
+
+**Note on Swift 6 migration**: The project uses Swift 6.2, but currently has default actor isolation disabled (`SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated`) to facilitate migration from Swift 5. This means SwiftUI Views are not automatically isolated to `@MainActor` as they would be by default in Swift 6. The migration should be completed by enabling default isolation and resolving any concurrency issues.
 
 The architecture ensures separation of concerns, testability, and scalability.
 
@@ -261,9 +264,8 @@ SwiftLint is included to enforce code style.
   - Configuration: `.swiftlint.yml` at the repository root (if present); otherwise default rules apply.
 
 ## Potential Improvements
+  - **Complete Swift 6 migration**: Enable default actor isolation (`SWIFT_DEFAULT_ACTOR_ISOLATION`) and resolve any remaining concurrency issues to fully leverage Swift 6's type-safe concurrency model.
   - Extract reusable modules (e.g., `DesignSystem`, `Networking`) as SPM packages.
   - Consider feature flags for experimental UI variations.
   - Add a GitHub Actions (or similar) workflow for build + test + lint on PRs.
   - Add UseCase tests to validate domain logic independently of repositories.
-  - Pull-to-refresh and load-more pagination affordances.
-  - Add a grid layout where it improves scannability.
