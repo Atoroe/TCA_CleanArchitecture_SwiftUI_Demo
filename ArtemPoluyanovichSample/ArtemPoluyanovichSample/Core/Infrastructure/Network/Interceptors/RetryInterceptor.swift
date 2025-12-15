@@ -5,12 +5,7 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
-import ComposableArchitecture
 import Foundation
-
-// MARK: - Clock Import
-// Explicit import for Clock protocol from Swift Concurrency
-// This ensures Clock and ContinuousClock are properly resolved
 
 // MARK: - RetryInterceptor
 // Note: @unchecked Sendable is safe here because:
@@ -27,7 +22,7 @@ final class RetryInterceptor: Interceptor, @unchecked Sendable {
     nonisolated init(
         maxRetries: Int = 3,
         retryDelay: TimeInterval = 5.0,
-        clock: any Clock<Duration> = ContinuousClock() as any Clock<Duration>
+        clock: any Clock<Duration> = ContinuousClock()
     ) {
         self.maxRetries = maxRetries
         self.retryDelay = retryDelay
