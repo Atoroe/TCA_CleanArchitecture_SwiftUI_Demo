@@ -19,9 +19,9 @@ extension DependencyValues {
 // MARK: - DependencyKey Implementation
 private enum GamesUseCaseKey: DependencyKey {
     // MARK: - Live Value
+
     static let liveValue: GamesUseCase = {
-        let restService = NetworkServiceFactory.createRestService()
-        let repository = GamesRepositoryImpl(restService: restService)
+        @Dependency(\.gamesRepository) var repository
         
         return GamesUseCase(
             fetchGenres: { page, pageSize in
