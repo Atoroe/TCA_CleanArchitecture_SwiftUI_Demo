@@ -21,8 +21,6 @@ private enum GamesUseCaseKey: DependencyKey {
     // MARK: - Live Value
 
     static let liveValue: GamesUseCase = {
-        // We can access the live repository directly since we are in the live value factory
-        // In a real Reducer we would use @Dependency(\.gamesRepository)
         @Dependency(\.gamesRepository) var repository
         
         return GamesUseCase(

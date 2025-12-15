@@ -8,7 +8,6 @@
 import ComposableArchitecture
 import Foundation
 
-// MARK: - GamesRepository Protocol
 // MARK: - GamesRepository Struct
 @DependencyClient
 struct GamesRepository: Sendable {
