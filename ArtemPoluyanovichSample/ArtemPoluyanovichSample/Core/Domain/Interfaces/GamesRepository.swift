@@ -5,10 +5,13 @@
 //  Created by Artiom Poluyanovich on 14/11/2025.
 //
 
+import ComposableArchitecture
 import Foundation
 
 // MARK: - GamesRepository Protocol
-protocol GamesRepository: Sendable {
-    @concurrent func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre>
-    @concurrent func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game>
+// MARK: - GamesRepository Struct
+@DependencyClient
+struct GamesRepository: Sendable {
+    var fetchGenres: @Sendable (_ page: Int, _ pageSize: Int) async throws -> PagedResult<Genre>
+    var fetchGames: @Sendable (_ genreId: String, _ page: Int, _ pageSize: Int) async throws -> PagedResult<Game>
 }
