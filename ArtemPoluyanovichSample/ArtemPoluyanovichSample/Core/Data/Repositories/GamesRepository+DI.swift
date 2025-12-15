@@ -36,12 +36,12 @@ private enum GamesRepositoryKey: DependencyKey {
 
 // MARK: - Mock Repository
 private struct MockGamesRepository: GamesRepository {
-    func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
+    @concurrent func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
         let genres = (1...min(pageSize, 10)).map { Genre(id: "\($0)", name: "Genre \($0)") }
         return PagedResult(items: genres, currentPage: page, totalPages: 5)
     }
     
-    func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
+    @concurrent func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
         let games = (1...min(pageSize, 10)).map { Game(id: "\($0)", name: "Game \($0) for \(genreId)") }
         return PagedResult(items: games, currentPage: page, totalPages: 5)
     }

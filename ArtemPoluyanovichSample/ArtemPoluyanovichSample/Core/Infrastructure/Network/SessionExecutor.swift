@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - SessionExecutorProtocol
 protocol SessionExecutorProtocol: Sendable {
-    func execute(_ request: URLRequest) async throws -> (Data, URLResponse)
+    @concurrent func execute(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
 
 // MARK: - SessionExecutor
@@ -36,7 +36,7 @@ final class SessionExecutor: SessionExecutorProtocol, @unchecked Sendable {
         }
     }
     
-    func execute(_ request: URLRequest) async throws -> (Data, URLResponse) {
+    @concurrent func execute(_ request: URLRequest) async throws -> (Data, URLResponse) {
         let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {

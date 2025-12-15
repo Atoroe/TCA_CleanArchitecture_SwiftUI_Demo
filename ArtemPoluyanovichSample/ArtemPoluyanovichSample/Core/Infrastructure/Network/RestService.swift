@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - RestServiceProtocol
 protocol RestServiceProtocol: Sendable {
-    func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType
+    @concurrent func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType
 }
 
 // MARK: RestService
@@ -39,7 +39,7 @@ final class RestService: RestServiceProtocol, @unchecked Sendable {
     
     // MARK: Public Methods
     
-    func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType {
+    @concurrent func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType {
         let urlRequest = try await buildURLRequest(request)
         
         let chain = DefaultInterceptorChain(

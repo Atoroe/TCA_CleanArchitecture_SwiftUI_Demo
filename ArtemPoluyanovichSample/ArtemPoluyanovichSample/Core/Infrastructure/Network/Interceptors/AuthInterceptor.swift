@@ -18,7 +18,7 @@ final class AuthInterceptor: Interceptor, @unchecked Sendable {
         self.queryParameterName = queryParameterName
     }
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         var modifiedRequest = request
         
         guard let url = modifiedRequest.url,

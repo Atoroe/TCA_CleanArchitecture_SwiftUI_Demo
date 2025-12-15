@@ -28,7 +28,7 @@ final class DefaultInterceptorChain: InterceptorChain, @unchecked Sendable {
         self.sessionExecutor = sessionExecutor
     }
     
-    func proceed(_ request: URLRequest) async throws -> (Data, URLResponse) {
+    @concurrent func proceed(_ request: URLRequest) async throws -> (Data, URLResponse) {
         if index < interceptors.count {
             let next = DefaultInterceptorChain(
                 interceptors: interceptors,

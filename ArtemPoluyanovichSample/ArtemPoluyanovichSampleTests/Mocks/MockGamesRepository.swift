@@ -16,14 +16,14 @@ final class MockGamesRepository: GamesRepository, @unchecked Sendable {
     var fetchGamesHandler: ((String, Int, Int) async throws -> PagedResult<Game>)?
     
     // MARK: - GamesRepository Implementation
-    func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
+    @concurrent func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
         guard let handler = fetchGenresHandler else {
             fatalError("fetchGenresHandler not set in MockGamesRepository")
         }
         return try await handler(page, pageSize)
     }
     
-    func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
+    @concurrent func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
         guard let handler = fetchGamesHandler else {
             fatalError("fetchGamesHandler not set in MockGamesRepository")
         }

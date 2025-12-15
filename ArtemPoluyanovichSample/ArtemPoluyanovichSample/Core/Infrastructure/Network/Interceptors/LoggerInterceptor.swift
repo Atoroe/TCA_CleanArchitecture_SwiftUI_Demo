@@ -25,7 +25,7 @@ final class LoggerInterceptor: Interceptor, @unchecked Sendable {
         return "\(prefix)****\(suffix)"
     }
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         guard enabled else { return try await chain.proceed(request) }
         
         logRequest(request)

@@ -16,7 +16,7 @@ struct GamesRepositoryImpl: GamesRepository, Sendable {
     }
     
     // MARK: - Fetch Genres
-    func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
+    @concurrent func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
         let request = ApiRequest(
             path: UrlPaths.genres,
             queryParameters: [
@@ -44,7 +44,7 @@ struct GamesRepositoryImpl: GamesRepository, Sendable {
     }
     
     // MARK: - Fetch Games
-    func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
+    @concurrent func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
         let request = ApiRequest(
             path: UrlPaths.games,
             queryParameters: [
