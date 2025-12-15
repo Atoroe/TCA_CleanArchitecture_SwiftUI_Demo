@@ -12,7 +12,7 @@ final class ErrorHandlerInterceptor: Interceptor, @unchecked Sendable {
     
     // MARK: - Public Methods
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         do {
             return try await chain.proceed(request)
         } catch {

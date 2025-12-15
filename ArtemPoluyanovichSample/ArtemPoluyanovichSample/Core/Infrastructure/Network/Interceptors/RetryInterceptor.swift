@@ -36,7 +36,7 @@ final class RetryInterceptor: Interceptor, @unchecked Sendable {
     
     // MARK: Public Methods
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         var lastError: Error?
         
         for attempt in 0...maxRetries {
