@@ -8,12 +8,17 @@
 import Foundation
 
 // MARK: - RestServiceProtocol
-protocol RestServiceProtocol {
-    nonisolated func send<ResultType: Decodable>(_ request: ApiRequestProtocol) async throws -> ResultType
+protocol RestServiceProtocol: Sendable {
+    @concurrent func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType
 }
 
 // MARK: RestService
-final class RestService: RestServiceProtocol {
+// Note: @unchecked Sendable is safe here because:
+// - All stored properties are immutable (let)
+// - Configuration and interceptors are immutable after initialization
+// - SessionExecutor is Sendable
+// - No mutable state is shared across isolation domains
+final class RestService: RestServiceProtocol, @unchecked Sendable {
     
     // MARK: Properties
     private let configuration: NetworkConfiguration
@@ -21,7 +26,7 @@ final class RestService: RestServiceProtocol {
     private let sessionExecutor: SessionExecutorProtocol
     
     // MARK: Initializer
-    init(
+    nonisolated init(
         configuration: NetworkConfiguration,
         interceptors: [Interceptor] = [],
         sessionExecutor: SessionExecutorProtocol? = nil
@@ -34,7 +39,7 @@ final class RestService: RestServiceProtocol {
     
     // MARK: Public Methods
     
-    nonisolated func send<ResultType: Decodable>(_ request: ApiRequestProtocol) async throws -> ResultType {
+    @concurrent func send<ResultType: Decodable & Sendable>(_ request: ApiRequestProtocol) async throws -> ResultType {
         let urlRequest = try await buildURLRequest(request)
         
         let chain = DefaultInterceptorChain(

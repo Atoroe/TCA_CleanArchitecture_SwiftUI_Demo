@@ -17,10 +17,10 @@ final class MockInterceptorChain: InterceptorChain, @unchecked Sendable {
     private(set) var lastRequest: URLRequest?
     
     // MARK: Behavior
-    enum Behavior {
+    enum Behavior: @unchecked Sendable {
         case success(Data, URLResponse)
         case failure(Error)
-        case custom((URLRequest) async throws -> (Data, URLResponse))
+        case custom(@Sendable (URLRequest) async throws -> (Data, URLResponse))
     }
     
     // MARK: Initializer
@@ -54,7 +54,7 @@ extension MockInterceptorChain {
         MockInterceptorChain(behavior: .failure(error))
     }
     
-    static func custom(_ handler: @escaping (URLRequest) async throws -> (Data, URLResponse)) -> MockInterceptorChain {
+    static func custom(_ handler: @escaping @Sendable (URLRequest) async throws -> (Data, URLResponse)) -> MockInterceptorChain {
         MockInterceptorChain(behavior: .custom(handler))
     }
 }

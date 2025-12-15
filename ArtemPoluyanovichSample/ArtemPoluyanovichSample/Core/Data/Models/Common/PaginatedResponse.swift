@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PaginatedResponse<T: Codable & Equatable>: Codable, Equatable {
+struct PaginatedResponse<T: Equatable & Sendable & Codable>: Equatable, Sendable, Codable {
     let count: Int
     let next: String?
     let previous: String?

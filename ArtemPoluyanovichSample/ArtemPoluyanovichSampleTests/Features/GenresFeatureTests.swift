@@ -8,6 +8,7 @@
 @testable import ArtemPoluyanovichSample
 import ComposableArchitecture
 import Testing
+import Clocks
 
 @MainActor
 struct GenresFeatureTests {
@@ -21,14 +22,18 @@ struct GenresFeatureTests {
             totalPages: 2
         )
         
-        let repository = MockGamesRepository()
-            .withGenres(page: 0, result: result)
-        let useCase = TestDataHelpers.makeUseCase(from: repository)
-        
         let store = TestStore(initialState: GenresFeature.State()) {
             GenresFeature()
         } withDependencies: {
-            $0.gamesUseCase = useCase
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { page, pageSize in
+                    #expect(page == 0)
+                    #expect(pageSize == 20)
+                    return result
+                },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -49,21 +54,11 @@ struct GenresFeatureTests {
         let firstPageItems = TestDataHelpers.makeTestGenres(page: 0)
         let secondPageItems = TestDataHelpers.makeTestGenres(page: 1)
         
-        let firstPageResult = PagedResult(
-            items: firstPageItems,
-            currentPage: 0,
-            totalPages: 2
-        )
         let secondPageResult = PagedResult(
             items: secondPageItems,
             currentPage: 1,
             totalPages: 2
         )
-        
-        let repository = MockGamesRepository()
-            .withGenres(page: 0, result: firstPageResult)
-            .withGenres(page: 1, result: secondPageResult)
-        let useCase = TestDataHelpers.makeUseCase(from: repository)
         
         var initialState = GenresFeature.State()
         initialState.genres = firstPageItems
@@ -74,7 +69,15 @@ struct GenresFeatureTests {
         let store = TestStore(initialState: initialState) {
             GenresFeature()
         } withDependencies: {
-            $0.gamesUseCase = useCase
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { page, pageSize in
+                    #expect(page == 1)
+                    #expect(pageSize == 20)
+                    return secondPageResult
+                },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -97,6 +100,12 @@ struct GenresFeatureTests {
         
         let store = TestStore(initialState: GenresFeature.State()) {
             GenresFeature()
+        } withDependencies: {
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -110,20 +119,11 @@ struct GenresFeatureTests {
         let firstPageItems = TestDataHelpers.makeTestGenres(page: 0)
         let refreshedItems = TestDataHelpers.makeTestGenres(page: 0)
         
-        _ = PagedResult(
-            items: firstPageItems,
-            currentPage: 0,
-            totalPages: 2
-        )
         let refreshedResult = PagedResult(
             items: refreshedItems,
             currentPage: 0,
             totalPages: 2
         )
-        
-        let repository = MockGamesRepository()
-            .withGenres(page: 0, result: refreshedResult)
-        let useCase = TestDataHelpers.makeUseCase(from: repository)
         
         var initialState = GenresFeature.State()
         initialState.genres = firstPageItems
@@ -134,7 +134,15 @@ struct GenresFeatureTests {
         let store = TestStore(initialState: initialState) {
             GenresFeature()
         } withDependencies: {
-            $0.gamesUseCase = useCase
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { page, pageSize in
+                    #expect(page == 0)
+                    #expect(pageSize == 20)
+                    return refreshedResult
+                },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -162,6 +170,12 @@ struct GenresFeatureTests {
         
         let store = TestStore(initialState: initialState) {
             GenresFeature()
+        } withDependencies: {
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -182,6 +196,12 @@ struct GenresFeatureTests {
         
         let store = TestStore(initialState: initialState) {
             GenresFeature()
+        } withDependencies: {
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         
@@ -201,6 +221,12 @@ struct GenresFeatureTests {
         
         let store = TestStore(initialState: initialState) {
             GenresFeature()
+        } withDependencies: {
+            $0.continuousClock = ImmediateClock()
+            $0.gamesUseCase = .testMock(
+                fetchGenres: { _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) },
+                fetchGames: { _, _, _ in PagedResult(items: [], currentPage: 0, totalPages: 0) }
+            )
         }
         store.exhaustivity = .off
         

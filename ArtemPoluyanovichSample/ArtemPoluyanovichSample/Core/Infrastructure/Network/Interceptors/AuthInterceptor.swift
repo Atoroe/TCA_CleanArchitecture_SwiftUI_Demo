@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - AuthInterceptor
-final class AuthInterceptor: Interceptor {
+final class AuthInterceptor: Interceptor, @unchecked Sendable {
     
     private let apiKey: String
     private let queryParameterName: String
@@ -18,7 +18,7 @@ final class AuthInterceptor: Interceptor {
         self.queryParameterName = queryParameterName
     }
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         var modifiedRequest = request
         
         guard let url = modifiedRequest.url,

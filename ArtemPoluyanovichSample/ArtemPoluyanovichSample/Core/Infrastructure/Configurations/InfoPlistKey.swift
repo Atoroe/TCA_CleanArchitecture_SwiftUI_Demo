@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum InfoPlistKey: String {
+enum InfoPlistKey: String, Sendable {
     case environment = "ENVIRONMENT"
     case appDisplayName = "APP_DISPLAY_NAME"
     case apiKey = "API_KEY"

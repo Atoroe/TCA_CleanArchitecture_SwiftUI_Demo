@@ -8,12 +8,15 @@
 @testable import ArtemPoluyanovichSample
 import Foundation
 
+// Note: @unchecked Sendable is safe here because:
+// - executeBehavior closure is @Sendable
+// - executeCallCount and lastExecuteRequest are accessed only in tests (single-threaded)
 final class MockSessionExecutor: SessionExecutorProtocol, @unchecked Sendable {
-    var executeBehavior: (URLRequest) async throws -> (Data, URLResponse)
+    var executeBehavior: @Sendable (URLRequest) async throws -> (Data, URLResponse)
     var executeCallCount = 0
     var lastExecuteRequest: URLRequest?
     
-    init(executeBehavior: @escaping (URLRequest) async throws -> (Data, URLResponse)) {
+    init(executeBehavior: @escaping @Sendable (URLRequest) async throws -> (Data, URLResponse)) {
         self.executeBehavior = executeBehavior
     }
     

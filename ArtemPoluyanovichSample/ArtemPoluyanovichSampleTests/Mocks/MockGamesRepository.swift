@@ -1,52 +1,32 @@
 //
 //  MockGamesRepository.swift
-//  ArtemPoluyanovichSample
+//  ArtemPoluyanovichSampleTests
 //
-//  Created by Artiom Poluyanovich on 16/11/2025.
+//  Created by Artiom Poluyanovich on 11/12/2025.
 //
 
 @testable import ArtemPoluyanovichSample
 import Foundation
 
-struct MockGamesRepository: GamesRepository {
-    private var genresPages: [Int: PagedResult<Genre>] = [:]
-    private var gamesPages: [Int: PagedResult<Game>] = [:]
-    private var error: AppError?
+// MARK: - MockGamesRepository
+/// Mock implementation of GamesRepository for tests
+final class MockGamesRepository: GamesRepository, @unchecked Sendable {
+    // MARK: - Closures for mocking
+    var fetchGenresHandler: ((Int, Int) async throws -> PagedResult<Genre>)?
+    var fetchGamesHandler: ((String, Int, Int) async throws -> PagedResult<Game>)?
     
-    init() {}
-    
-    func withGenres(page: Int, result: PagedResult<Genre>) -> Self {
-        var copy = self
-        copy.genresPages[page] = result
-        return copy
-    }
-    
-    func withGames(page: Int, result: PagedResult<Game>) -> Self {
-        var copy = self
-        copy.gamesPages[page] = result
-        return copy
-    }
-    
-    func withError(_ error: AppError) -> Self {
-        var copy = self
-        copy.error = error
-        return copy
-    }
-    
-    func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
-        if let error {
-            throw error
+    // MARK: - GamesRepository Implementation
+    @concurrent func fetchGenres(page: Int, pageSize: Int) async throws -> PagedResult<Genre> {
+        guard let handler = fetchGenresHandler else {
+            fatalError("fetchGenresHandler not set in MockGamesRepository")
         }
-        
-        return genresPages[page] ?? PagedResult(items: [], currentPage: page, totalPages: 0)
+        return try await handler(page, pageSize)
     }
     
-    func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
-        if let error {
-            throw error
+    @concurrent func fetchGames(genreId: String, page: Int, pageSize: Int) async throws -> PagedResult<Game> {
+        guard let handler = fetchGamesHandler else {
+            fatalError("fetchGamesHandler not set in MockGamesRepository")
         }
-        
-        return gamesPages[page] ?? PagedResult(items: [], currentPage: page, totalPages: 0)
+        return try await handler(genreId, page, pageSize)
     }
 }
-

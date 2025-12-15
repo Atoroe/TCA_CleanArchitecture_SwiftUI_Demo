@@ -9,11 +9,15 @@ import Foundation
 
 // MARK: - SessionExecutorProtocol
 protocol SessionExecutorProtocol: Sendable {
-    func execute(_ request: URLRequest) async throws -> (Data, URLResponse)
+    @concurrent func execute(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
 
 // MARK: - SessionExecutor
-final class SessionExecutor: SessionExecutorProtocol {
+// Note: @unchecked Sendable is safe here because:
+// - URLSession is Sendable in Swift 6
+// - Session is immutable after initialization
+// - No mutable state is shared across isolation domains
+final class SessionExecutor: SessionExecutorProtocol, @unchecked Sendable {
     private let session: URLSession
     
     nonisolated init(
@@ -32,7 +36,7 @@ final class SessionExecutor: SessionExecutorProtocol {
         }
     }
     
-    func execute(_ request: URLRequest) async throws -> (Data, URLResponse) {
+    @concurrent func execute(_ request: URLRequest) async throws -> (Data, URLResponse) {
         let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {

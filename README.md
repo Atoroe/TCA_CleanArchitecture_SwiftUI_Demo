@@ -11,13 +11,16 @@ This project follows a clean architecture approach combining:
 - **Clean Swift** principles for layer separation  
 - **SwiftUI** for declarative UI development
 - **Swift Testing** for tests
+- **Swift 6.2** with upcoming features (`InferIsolatedConformances`, `NonisolatedNonsendingByDefault`)
+
+**Swift 6 Migration**: The project has fully migrated to Swift 6.2 with strict concurrency checks enabled (`SWIFT_STRICT_CONCURRENCY = complete`). SwiftUI Views are automatically isolated to `@MainActor`, and network operations use `@concurrent` to execute safely off the main actor. The project builds with zero concurrency warnings.
 
 The architecture ensures separation of concerns, testability, and scalability.
 
 ## Quick Start
 
 ### Prerequisites
-- Xcode 15+
+- Xcode 26+
 - iOS 17+ simulator
 
 ### First Run Setup
@@ -265,5 +268,3 @@ SwiftLint is included to enforce code style.
   - Consider feature flags for experimental UI variations.
   - Add a GitHub Actions (or similar) workflow for build + test + lint on PRs.
   - Add UseCase tests to validate domain logic independently of repositories.
-  - Pull-to-refresh and load-more pagination affordances.
-  - Add a grid layout where it improves scannability.

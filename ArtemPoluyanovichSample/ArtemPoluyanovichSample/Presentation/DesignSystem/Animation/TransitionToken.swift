@@ -8,6 +8,7 @@
 import SwiftUI
 
 // MARK: - Basic Transitions
+@MainActor
 enum TransitionToken {
     
     static let slideFromBottom = AnyTransition.move(edge: .bottom)

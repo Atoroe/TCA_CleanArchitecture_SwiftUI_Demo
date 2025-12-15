@@ -13,7 +13,11 @@ import Foundation
 // This ensures Clock and ContinuousClock are properly resolved
 
 // MARK: - RetryInterceptor
-final class RetryInterceptor: Interceptor {
+// Note: @unchecked Sendable is safe here because:
+// - All stored properties are immutable (let)
+// - Clock is used only for reading (sleep operation)
+// - No mutable state is shared across isolation domains
+final class RetryInterceptor: Interceptor, @unchecked Sendable {
     // MARK: properties
     private let maxRetries: Int
     private let retryDelay: TimeInterval
@@ -32,7 +36,7 @@ final class RetryInterceptor: Interceptor {
     
     // MARK: Public Methods
     
-    func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
+    @concurrent func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (Data, URLResponse) {
         var lastError: Error?
         
         for attempt in 0...maxRetries {

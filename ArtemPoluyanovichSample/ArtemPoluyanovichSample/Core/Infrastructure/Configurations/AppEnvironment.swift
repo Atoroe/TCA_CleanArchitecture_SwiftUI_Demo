@@ -7,8 +7,12 @@
 
 import Foundation
 
-final class AppEnvironment {
-    static let shared = AppEnvironment()
+// Note: @unchecked Sendable is safe here because:
+// - All stored properties are immutable (let)
+// - Singleton pattern with private init ensures single instance
+// - No mutable state is shared across isolation domains
+final class AppEnvironment: @unchecked Sendable {
+    nonisolated static let shared = AppEnvironment()
     
     // MARK: - Properties
     
@@ -19,7 +23,7 @@ final class AppEnvironment {
     
     // MARK: - Initialization
     
-    private init() {
+    nonisolated private init() {
         guard let envString = Self.value(for: .environment),
               let env = Environment(rawValue: envString) else {
             fatalError(EnvironmentError.environmentNotFound.localizedDescription)
@@ -44,29 +48,29 @@ final class AppEnvironment {
     
     // MARK: - Private Methods
     
-    private static func value(for key: InfoPlistKey) -> String? {
+    nonisolated private static func value(for key: InfoPlistKey) -> String? {
         return Bundle.main.infoDictionary?[key.rawValue] as? String
     }
 }
 
 // MARK: - Environment Enum
 
-enum Environment: String {
+enum Environment: String, Sendable {
     case development = "dev"
     case production = "prod"
     
-    var isDevelopment: Bool {
+    nonisolated var isDevelopment: Bool {
         self == .development
     }
     
-    var isProduction: Bool {
+    nonisolated var isProduction: Bool {
         self == .production
     }
 }
 
 // MARK: - EnvironmentError
 
-enum EnvironmentError: LocalizedError {
+enum EnvironmentError: LocalizedError, Sendable {
     case environmentNotFound
     case appDisplayNameNotFound
     case apiKeyNotFound

@@ -11,7 +11,21 @@ import Foundation
 final class URLProtocolMock: URLProtocol {
     
     // MARK: Static Properties
-    static var requestHandler: ((URLRequest) throws -> (URLResponse, Data?))?
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var _requestHandler: ((URLRequest) throws -> (URLResponse, Data?))?
+    
+    static var requestHandler: ((URLRequest) throws -> (URLResponse, Data?))? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _requestHandler
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _requestHandler = newValue
+        }
+    }
     
     // MARK: URLProtocol
     override class func canInit(with request: URLRequest) -> Bool {
