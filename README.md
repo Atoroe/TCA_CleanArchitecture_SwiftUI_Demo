@@ -13,14 +13,14 @@ This project follows a clean architecture approach combining:
 - **Swift Testing** for tests
 - **Swift 6.2** with upcoming features (`InferIsolatedConformances`, `NonisolatedNonsendingByDefault`)
 
-**Swift 6 Migration**: The project has completed migration to Swift 6.2 with default actor isolation enabled. SwiftUI Views are automatically isolated to `@MainActor` for type-safe UI operations. Network operations use `@concurrent` to execute outside the main actor, preventing UI blocking.
+**Swift 6 Migration**: The project has fully migrated to Swift 6.2 with strict concurrency checks enabled (`SWIFT_STRICT_CONCURRENCY = complete`). SwiftUI Views are automatically isolated to `@MainActor`, and network operations use `@concurrent` to execute safely off the main actor. The project builds with zero concurrency warnings.
 
 The architecture ensures separation of concerns, testability, and scalability.
 
 ## Quick Start
 
 ### Prerequisites
-- Xcode 15+
+- Xcode 26+
 - iOS 17+ simulator
 
 ### First Run Setup
