@@ -19,16 +19,16 @@ extension DependencyValues {
 // MARK: - DependencyKey Implementation
 private enum GamesUseCaseKey: DependencyKey {
     // MARK: - Live Value
-
     static let liveValue: GamesUseCase = {
         @Dependency(\.gamesRepository) var repository
+        let impl = GamesUseCaseImpl(repository: repository)
         
         return GamesUseCase(
             fetchGenres: { page, pageSize in
-                try await repository.fetchGenres(page: page, pageSize: pageSize)
+                try await impl.fetchGenres(page: page, pageSize: pageSize)
             },
             fetchGames: { genreId, page, pageSize in
-                try await repository.fetchGames(genreId: genreId, page: page, pageSize: pageSize)
+                try await impl.fetchGames(genreId: genreId, page: page, pageSize: pageSize)
             }
         )
     }()
