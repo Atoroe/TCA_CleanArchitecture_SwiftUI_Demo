@@ -28,4 +28,3 @@ final class GamesUseCaseImpl: @unchecked Sendable {
         try await repository.fetchGames(genreId: genreId, page: page, pageSize: pageSize)
     }
 }
-
